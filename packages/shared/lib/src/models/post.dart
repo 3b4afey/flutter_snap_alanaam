@@ -3,8 +3,8 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 import 'package:shared/shared.dart';
 import 'package:shared/src/models/user_converter.dart';
-import 'package:user_repository/user_repository.dart';
 import 'package:snap_blocks/snap_blocks.dart';
+import 'package:user_repository/user_repository.dart';
 
 part 'post.g.dart';
 
@@ -13,7 +13,8 @@ part 'post.g.dart';
 
 /// {@template post}
 /// A post model.
-/// {@endtemplate} class Post {
+/// {@endtemplate}
+class Post {
   /// {@macro post}
   const Post({
     required this.id,
@@ -25,19 +26,17 @@ part 'post.g.dart';
   });
 
   /// Converts a `Map<String, dynamic>` into a [Post] instance.
-  factory Post.fromJson(Map<String, dynamic> json) =>
-      _$PostFromJson(
-        json
-          ..putIfAbsent(
-            'author',
-                () =>
-            {
-              'id': json['user_id'],
-              'avatar_url': json['avatar_url'],
-              'username': json['username'] ?? json['full_name'],
-            },
-          ),
-      );
+  factory Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(
+    json
+      ..putIfAbsent(
+        'author',
+            () => {
+          'id': json['user_id'],
+          'avatar_url': json['avatar_url'],
+          'username': json['username'] ?? json['full_name'],
+        },
+      ),
+  );
 
   /// The post unique identifier.
   final String id;
@@ -82,12 +81,11 @@ part 'post.g.dart';
 }
 
 extension PostConverter on PostBlock {
-  Post get toPost =>
-      Post(
-        id: id,
-        author: author.toUser,
-        caption: caption,
-        createdAt: createdAt,
-        media: media,
-      );
+  Post get toPost => Post(
+    id: id,
+    author: author.toUser,
+    caption: caption,
+    createdAt: createdAt,
+    media: media,
+  );
 }

@@ -13,7 +13,8 @@ part 'video.g.dart';
 
 /// {@template video_media}
 /// A video media block.
-/// {@endtemplate} class VideoMedia extends Media {
+/// {@endtemplate}
+class VideoMedia extends Media {
   /// {@macro video_media}
   const VideoMedia({
     required this.id,
@@ -46,7 +47,8 @@ part 'video.g.dart';
 
 /// {@template memory_video_media}
 /// A memory video media block.
-/// {@endtemplate} class MemoryVideoMedia extends Media {
+/// {@endtemplate}
+class MemoryVideoMedia extends Media {
   /// {@macro memory_video_media}
   const MemoryVideoMedia({
     required super.id,
@@ -63,8 +65,7 @@ part 'video.g.dart';
   static const identifier = '__memory_video_media__';
 
   @override
-  Map<String, dynamic> toJson() =>
-      {
-        'file': file.readAsBytesSync().toList(),
-      };
+  Map<String, dynamic> toJson() => {
+    'file': file.readAsBytesSync().toList(),
+  };
 }

@@ -13,7 +13,8 @@ part 'image.g.dart';
 
 /// {@template image_media}
 /// An image media block.
-/// {@endtemplate} class ImageMedia extends Media {
+/// {@endtemplate}
+class ImageMedia extends Media {
   /// {@macro image_media}
   const ImageMedia({
     required this.id,
@@ -58,7 +59,8 @@ class UintConverter implements JsonConverter<Uint8List, List<int>> {
 
 /// {@template image_media}
 /// A memory image media block.
-/// {@endtemplate} class MemoryImageMedia extends Media {
+/// {@endtemplate}
+class MemoryImageMedia extends Media {
   /// {@macro memory_image_media}
   const MemoryImageMedia({
     required this.bytes,

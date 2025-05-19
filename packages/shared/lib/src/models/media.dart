@@ -12,9 +12,9 @@ class ListMediaConverterFromDb extends JsonConverter<List<Media>, String> {
 
   @override
   List<Media> fromJson(String json) => List<Media>.from(
-        (jsonDecode(json) as List<dynamic>)
-            .map((e) => Media.fromJson(e as Map<String, dynamic>)),
-      ).toList();
+    (jsonDecode(json) as List<dynamic>)
+        .map((e) => Media.fromJson(e as Map<String, dynamic>)),
+  ).toList();
 
   @override
   String toJson(List<Media> object) =>
@@ -29,8 +29,8 @@ class ListMediaConverterFromRemoteConfig
 
   @override
   List<Media> fromJson(List<dynamic> json) => List<Media>.from(
-        json.map((e) => Media.fromJson(e as Map<String, dynamic>)),
-      );
+    json.map((e) => Media.fromJson(e as Map<String, dynamic>)),
+  );
 
   @override
   List<Map<String, dynamic>> toJson(List<Media> object) =>
