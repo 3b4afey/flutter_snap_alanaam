@@ -1,14 +1,17 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:collection/collection.dart';
+import 'package:firebase_remote_config_repository/firebase_remote_config_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_alanaam/core/network_error/network_error.dart';
 import 'package:flutter_snap_alanaam/features/feed/feed.dart';
 import 'package:flutter_snap_alanaam/features/feed/post/post.dart';
+
 // import 'package:flutter_snap_alanaam/features/stories/stories.dart';
 import 'package:flutter_snap_alanaam/features/user_profile/user_profile.dart';
 import 'package:flutter_snap_alanaam/l10n/l10n.dart';
 import 'package:inview_notifier_list/inview_notifier_list.dart';
+import 'package:posts_repository/posts_repository.dart';
 import 'package:snap_blocks/snap_blocks.dart';
 
 class FeedPage extends StatefulWidget {
@@ -47,7 +50,11 @@ class FeedPageState extends State<FeedPage> with RouteAware {
     //   )..add(const StoriesFetchUserFollowingsStories()),
     //   child: const FeedView(),
     // );
-    return Container();
+    return BlocProvider(
+      create: (context) => FeedBloc(postsRepository: context.read<PostsRepository>(),
+          firebaseRemoteConfigRepository: context.read<FirebaseRemoteConfigRepository>()),
+      child: FeedView(),
+    );
   }
 }
 
@@ -184,24 +191,25 @@ class FeedBody extends StatelessWidget {
     }
     if (block is SectionHeaderBlock) {
       return switch (block.sectionType) {
-        SectionHeaderBlockType.suggested => Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: md,
-                  vertical: s,
+        SectionHeaderBlockType.suggested =>
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: md,
+                    vertical: s,
+                  ),
+                  child: Text(
+                    context.l10n.loginText,
+                    style: context.headlineSmall,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-                child: Text(
-                  context.l10n.loginText,
-                  style: context.headlineSmall,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const AppDivider(),
-            ],
-          ),
+                const AppDivider(),
+              ],
+            ),
       };
     }
     if (index + 1 == feedLength) {
@@ -217,11 +225,12 @@ class FeedBody extends StatelessWidget {
           padding: EdgeInsets.only(top: feedLength == 0 ? md : 0),
           child: FeedLoaderItem(
             key: ValueKey(index),
-            onPresented: () => hasMorePosts
+            onPresented: () =>
+            hasMorePosts
                 ? context.read<FeedBloc>().add(const FeedPageRequested())
                 : context
-                    .read<FeedBloc>()
-                    .add(const FeedRecommendedPostsPageRequested()),
+                .read<FeedBloc>()
+                .add(const FeedRecommendedPostsPageRequested()),
           ),
         );
       }

@@ -24,43 +24,43 @@ class FollowButton extends StatelessWidget {
     final effectiveBackgroundColor = isOutlined
         ? null
         : context.customReversedAdaptiveColor(
-            light: AppColors.brightGrey,
-            dark: AppColors.emphasizeDarkGrey,
-          );
+      light: AppColors.brightGrey,
+      dark: AppColors.emphasizeDarkGrey,
+    );
     Widget button(String data) => Tappable.faded(
-          onTap: follow,
-          borderRadius: BorderRadius.circular(6),
-          backgroundColor: effectiveBackgroundColor,
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: md,
-              vertical: s,
-            ),
-            child: Text(
-              data,
-              style: context.labelLarge
-                  ?.apply(color: isOutlined ? AppColors.white : null),
-            ),
-          ),
-        );
+      onTap: follow,
+      borderRadius: BorderRadius.circular(6),
+      backgroundColor: effectiveBackgroundColor,
+      child: Padding(
+        padding:  EdgeInsets.symmetric(
+          horizontal: md,
+          vertical: s,
+        ),
+        child: Text(
+          data,
+          style: context.labelLarge
+              ?.apply(color: isOutlined ? AppColors.white : null),
+        ),
+      ),
+    );
 
     return switch (_followingStatus) {
       null => const SizedBox.shrink(),
       final String data => Tappable.faded(
-          onTap: follow,
-          borderRadius: BorderRadius.circular(6),
-          backgroundColor: effectiveBackgroundColor,
-          child: switch (isOutlined) {
-            true => DecoratedBox(
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.brightGrey),
-                  borderRadius: const BorderRadius.all(Radius.circular(6)),
-                ),
-                child: button(data),
-              ),
-            false => button(data),
-          },
-        ),
+        onTap: follow,
+        borderRadius: BorderRadius.circular(6),
+        backgroundColor: effectiveBackgroundColor,
+        child: switch (isOutlined) {
+          true => DecoratedBox(
+            decoration: BoxDecoration(
+              border: Border.all(color: AppColors.brightGrey),
+              borderRadius: const BorderRadius.all(Radius.circular(6)),
+            ),
+            child: button(data),
+          ),
+          false => button(data),
+        },
+      ),
     };
   }
 }

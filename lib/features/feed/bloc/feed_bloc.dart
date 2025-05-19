@@ -8,6 +8,7 @@ import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_remote_config_repository/firebase_remote_config_repository.dart';
+
 // import 'package:firebase_remote_config_repository/firebase_remote_config_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_snap_alanaam/app/app.dart';
@@ -16,14 +17,17 @@ import 'package:shared/shared.dart';
 import 'package:snap_blocks/snap_blocks.dart';
 
 part 'feed_bloc_mixin.dart';
+
 part 'feed_event.dart';
+
 part 'feed_state.dart';
 
 class FeedBloc extends Bloc<FeedEvent, FeedState> with FeedBlocMixin {
   FeedBloc({
     required PostsRepository postsRepository,
     required FirebaseRemoteConfigRepository firebaseRemoteConfigRepository,
-  })  : _postsRepository = postsRepository,
+  })
+      : _postsRepository = postsRepository,
         _firebaseRemoteConfigRepository = firebaseRemoteConfigRepository,
         super(const FeedState.initial()) {
     on<FeedPageRequested>(_onFeedPageRequested);
@@ -57,15 +61,13 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> with FeedBlocMixin {
   final PostsRepository _postsRepository;
   final FirebaseRemoteConfigRepository _firebaseRemoteConfigRepository;
 
-  Future<void> _onFeedPageRequested(
-    FeedPageRequested event,
-    Emitter<FeedState> emit,
-  ) async {
+  Future<void> _onFeedPageRequested(FeedPageRequested event,
+      Emitter<FeedState> emit,) async {
     emit(state.loading());
     try {
       final currentPage = event.page ?? state.feed.feedPage.page;
       final (:newPage, :hasMore, :blocks) =
-          await fetchFeedPage(page: currentPage);
+      await fetchFeedPage(page: currentPage);
 
       final feed = state.feed.copyWith(
         feedPage: state.feed.feedPage.copyWith(
@@ -85,10 +87,8 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> with FeedBlocMixin {
     }
   }
 
-  Future<void> _onFeedReelsPageRequested(
-    FeedReelsPageRequested event,
-    Emitter<FeedState> emit,
-  ) async {
+  Future<void> _onFeedReelsPageRequested(FeedReelsPageRequested event,
+      Emitter<FeedState> emit,) async {
     emit(state.loading());
     try {
       final currentPage = event.page ?? state.feed.reelsPage.page;
@@ -113,10 +113,8 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> with FeedBlocMixin {
     }
   }
 
-  Future<void> _onFeedReelsRefreshRequested(
-    FeedReelsRefreshRequested event,
-    Emitter<FeedState> emit,
-  ) async {
+  Future<void> _onFeedReelsRefreshRequested(FeedReelsRefreshRequested event,
+      Emitter<FeedState> emit,) async {
     emit(state.loading());
     try {
       final (:newPage, :hasMore, :blocks) = await fetchFeedPage(
@@ -139,10 +137,8 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> with FeedBlocMixin {
     }
   }
 
-  Future<void> _onFeedRefreshRequested(
-    FeedRefreshRequested event,
-    Emitter<FeedState> emit,
-  ) async {
+  Future<void> _onFeedRefreshRequested(FeedRefreshRequested event,
+      Emitter<FeedState> emit,) async {
     emit(state.loading());
     try {
       final (:newPage, :hasMore, :blocks) = await fetchFeedPage();
@@ -165,9 +161,8 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> with FeedBlocMixin {
   }
 
   Future<void> _onFeedRecommendedPostsPageRequested(
-    FeedRecommendedPostsPageRequested event,
-    Emitter<FeedState> emit,
-  ) async {
+      FeedRecommendedPostsPageRequested event,
+      Emitter<FeedState> emit,) async {
     emit(state.loading());
     try {
       final recommendedBlocks = <InstaBlock>[
@@ -192,10 +187,8 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> with FeedBlocMixin {
     }
   }
 
-  Future<void> _onFeedPostCreateRequested(
-    FeedPostCreateRequested event,
-    Emitter<FeedState> emit,
-  ) async {
+  Future<void> _onFeedPostCreateRequested(FeedPostCreateRequested event,
+      Emitter<FeedState> emit,) async {
     emit(state.loading());
     try {
       final newPost = await _postsRepository.createPost(
@@ -207,7 +200,7 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> with FeedBlocMixin {
         add(
           FeedUpdateRequested(
             update:
-                FeedPageUpdate(newPost: newPost, type: PageUpdateType.create),
+            FeedPageUpdate(newPost: newPost, type: PageUpdateType.create),
           ),
         );
       }
@@ -224,10 +217,8 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> with FeedBlocMixin {
     }
   }
 
-  Future<void> _onFeedUpdateRequested(
-    FeedUpdateRequested event,
-    Emitter<FeedState> emit,
-  ) async {
+  Future<void> _onFeedUpdateRequested(FeedUpdateRequested event,
+      Emitter<FeedState> emit,) async {
     emit(state.loading());
     final update = event.update;
     final oldFeed = state.feed;
@@ -238,7 +229,7 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> with FeedBlocMixin {
       );
       final reel = oldFeed.reelsPage.blocks.findPostBlock(
         test: (block) =>
-            block.id == update.newPost.id &&
+        block.id == update.newPost.id &&
             block.type == PostReelBlock.identifier,
       );
       if (feedBlock == null && reel == null && !update.isCreate) {
@@ -267,4 +258,5 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> with FeedBlocMixin {
       emit(state.failure());
     }
   }
+  
 }

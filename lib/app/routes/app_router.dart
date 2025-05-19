@@ -169,11 +169,8 @@ class AppRouter {
                     pageBuilder: (context, state) {
                       return CustomTransitionPage(
                         key: state.pageKey,
-                        // child: const FeedPage(),
-                        child: AppScaffold(
-                            body: Center(
-                          child: Text(' feed Props '),
-                        )),
+                        child: const FeedPage(),
+
 
                         transitionsBuilder:
                             (context, animation, secondaryAnimation, child) {

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:firebase_remote_config_repository/firebase_remote_config_repository.dart';
 
 /// {@template firebase_remote_config_exception}

@@ -168,14 +168,14 @@ abstract class PostsBaseRepository {
   Future<void> deleteComment({required String id});
 
   /// Shares the post with the user identified by [receiver].
-  Future<void> sharePost({
-    required String id,
-    required User sender,
-    required User receiver,
-    required Message sharedPostMessage,
-    Message? message,
-    // PostAuthor? postAuthor,
-  });
+  // Future<void> sharePost({
+  //   required String id,
+  //   required User sender,
+  //   required User receiver,
+  //   required Message sharedPostMessage,
+  //   Message? message,
+  //   PostAuthor? postAuthor,
+  // });
 }
 
 /// Abstract base class for a chats repository.
@@ -188,13 +188,13 @@ abstract class ChatsBaseRepository {
 
   /// Creates and send message with provided data. After sending the message
   /// the notification is sent to the user, identified by [receiver]'s `id`.
-  Future<void> sendMessage({
-    required String chatId,
-    required User sender,
-    required User receiver,
-    required Message message,
-    // PostAuthor? postAuthor,
-  });
+  // Future<void> sendMessage({
+  //   required String chatId,
+  //   required User sender,
+  //   required User receiver,
+  //   required Message message,
+  //   PostAuthor? postAuthor,
+  // });
 
   /// Deletes the message with provided [messageId].
   Future<void> deleteMessage({required String messageId});
@@ -269,7 +269,12 @@ abstract class ChatsBaseRepository {
 /// ```
 /// {@endtemplate}
 abstract class DatabaseClient
-    implements UserBaseRepository, PostsBaseRepository, ChatsBaseRepository {
+    implements
+        UserBaseRepository,
+        PostsBaseRepository,
+        ChatsBaseRepository
+        // StoriesBaseRepository 
+{
   /// {@macro database_client}
   const DatabaseClient();
 }
@@ -293,11 +298,11 @@ class PowerSyncDatabaseClient extends DatabaseClient {
 
   @override
   Stream<User> profile({required String id}) => _powerSyncRepository.db().watch(
-        'SELECT * FROM profiles WHERE id = ?',
-        parameters: [id],
-      ).map(
+    'SELECT * FROM profiles WHERE id = ?',
+    parameters: [id],
+  ).map(
         (event) => event.isEmpty ? User.anonymous : User.fromJson(event.first),
-      );
+  );
 
   @override
   Future<Post?> createPost({
@@ -342,8 +347,8 @@ SELECT * FROM profiles WHERE id = ?
     ''',
         parameters: [userId],
       ).map(
-        (event) =>
-            event.safeMap((element) => element['posts_count']).first as int,
+            (event) =>
+        event.safeMap((element) => element['posts_count']).first as int,
       );
 
   @override
@@ -366,7 +371,7 @@ ORDER BY created_at DESC
       ''',
         parameters: [currentUserId],
       ).map(
-        (event) => event
+            (event) => event
             .safeMap((row) => Post.fromJson(Map<String, dynamic>.from(row)))
             .toList(growable: false),
       );
@@ -386,7 +391,7 @@ ORDER BY created_at DESC
       ''',
       parameters: [userId],
     ).map(
-      (event) => event
+          (event) => event
           .safeMap((row) => Post.fromJson(Map<String, dynamic>.from(row)))
           .toList(growable: false),
     );
@@ -435,7 +440,7 @@ ORDER BY created_at DESC
 //       return posts;
 //     }
     final result = await _powerSyncRepository.db().computeWithDatabase(
-      (db) async {
+          (db) async {
         final result = db.select(
           '''
 SELECT
@@ -464,8 +469,8 @@ ORDER BY created_at DESC LIMIT ?1 OFFSET ?2
           final listMedia = jsonListMedia
               .map(
                 (jsonMedia) => (jsonDecode(jsonMedia) as List<dynamic>)
-                    .cast<Map<String, dynamic>>(),
-              )
+                .cast<Map<String, dynamic>>(),
+          )
               .toList();
 
           return sendPort.send(listMedia);
@@ -477,7 +482,7 @@ ORDER BY created_at DESC LIMIT ?1 OFFSET ?2
         );
         isolate.kill(priority: Isolate.immediate);
         final media =
-            await receivePort.first as List<List<Map<String, dynamic>>>;
+        await receivePort.first as List<List<Map<String, dynamic>>>;
 
         final posts = <Post>[];
         for (var i = 0; i < result.length; i++) {
@@ -602,7 +607,7 @@ WHERE posts.id = ?
     final statement = post ? 'post_id' : 'comment_id';
     final exists = await _powerSyncRepository.db().execute(
       'SELECT 1 FROM likes '
-      'WHERE user_id = ? AND $statement = ? AND $statement IS NOT NULL',
+          'WHERE user_id = ? AND $statement = ? AND $statement IS NOT NULL',
       [currentUserId, id],
     );
     if (exists.isEmpty) {
@@ -628,10 +633,10 @@ WHERE posts.id = ?
   Stream<int> followersCountOf({required String userId}) =>
       _powerSyncRepository.db().watch(
         'SELECT COUNT(*) AS subscription_count FROM subscriptions '
-        'WHERE subscribed_to_id = ?',
+            'WHERE subscribed_to_id = ?',
         parameters: [userId],
       ).map(
-        (event) => event
+            (event) => event
             .safeMap((element) => element['subscription_count'])
             .first as int,
       );
@@ -692,10 +697,10 @@ WHERE posts.id = ?
   Stream<int> followingsCountOf({required String userId}) =>
       _powerSyncRepository.db().watch(
         'SELECT COUNT(*) AS subscription_count FROM subscriptions '
-        'WHERE subscriber_id = ?',
+            'WHERE subscriber_id = ?',
         parameters: [userId],
       ).map(
-        (event) => event
+            (event) => event
             .safeMap((element) => element['subscription_count'])
             .first as int,
       );
@@ -732,10 +737,10 @@ WHERE posts.id = ?
       final followersFutures = await Future.wait(
         result.where((row) => row.isNotEmpty).safeMap(
               (row) => _powerSyncRepository.db().getOptional(
-                'SELECT * FROM profiles WHERE id = ?',
-                [row['subscriber_id']],
-              ),
-            ),
+            'SELECT * FROM profiles WHERE id = ?',
+            [row['subscriber_id']],
+          ),
+        ),
       );
       for (final user in followersFutures) {
         if (user == null) continue;
@@ -806,7 +811,7 @@ WHERE post_id = ?
 ''',
         parameters: [postId],
       ).map(
-        (result) => result.map((row) => row['comments_count']).first as int,
+            (result) => result.map((row) => row['comments_count']).first as int,
       );
 
   @override
@@ -833,7 +838,7 @@ ORDER BY created_at ASC
 ''',
         parameters: [postId],
       ).map(
-        (result) => result.safeMap(Comment.fromRow).toList(growable: false),
+            (result) => result.safeMap(Comment.fromRow).toList(growable: false),
       );
 
   @override
@@ -868,103 +873,104 @@ WHERE id = ?
         [id],
       );
 
-  @override
-  Future<void> sharePost({
-    required String id,
-    required User sender,
-    required User receiver,
-    required Message sharedPostMessage,
-    Message? message,
-    // PostAuthor? postAuthor,
-  }) async {
-    final exists = await _powerSyncRepository.db().execute(
-      '''
-SELECT 1 FROM posts WHERE id = ?
-''',
-      [id],
-    );
-    if (exists.isEmpty) return;
-    final conversation = await _powerSyncRepository.db().execute(
-      '''
-SELECT conversation_id
-  FROM participants
-WHERE user_id = ?
-  AND conversation_id IN (
-      SELECT conversation_id
-      FROM participants
-      WHERE user_id = ?
-    );
-''',
-      [sender.id, receiver.id],
-    );
-    if (conversation.isNotEmpty) {
-      final chatId = conversation.first['conversation_id'] as String;
-      await Future.wait([
-        sendMessage(
-          chatId: chatId,
-          sender: sender,
-          receiver: receiver,
-          message: sharedPostMessage,
-          // postAuthor: postAuthor,
-        ),
-        if (message != null)
-          sendMessage(
-            chatId: chatId,
-            sender: sender,
-            receiver: receiver,
-            message: message,
-          ),
-      ]);
-      return;
-    }
-    final newChatId = uuid.v4();
-    final createdConversation = _powerSyncRepository.db().execute(
-      '''
-insert into
-  conversations (id, type, name, created_at, updated_at)
-values
-  (?, ?, '', ?, ?)
-''',
-      // [newChatId, ChatType.oneOnOne.value, JiffyX.now(), JiffyX.now()],
-    );
-    final addParticipant1 = _powerSyncRepository.db().execute(
-      '''
-insert into
-  participants (id, user_id, conversation_id)
-  values
-  (?, ?, ?)
-  ''',
-      [uuid.v4(), sender.id, newChatId],
-    );
-    final addParticipant2 = _powerSyncRepository.db().execute(
-      '''
-insert into
-  participants (id, user_id, conversation_id)
-  values
-  (?, ?, ?)
-  ''',
-      [uuid.v4(), receiver.id, newChatId],
-    );
-    await createdConversation
-        .whenComplete(() => Future.wait([addParticipant1, addParticipant2]));
-
-    await Future.wait([
-      sendMessage(
-        chatId: newChatId,
-        sender: sender,
-        receiver: receiver,
-        message: sharedPostMessage,
-        // postAuthor: postAuthor,
-      ),
-      if (message != null)
-        sendMessage(
-          chatId: newChatId,
-          sender: sender,
-          receiver: receiver,
-          message: message,
-        ),
-    ]);
-  }
+//   @override
+//   Future<void> sharePost({
+//     required String id,
+//     required User sender,
+//     required User receiver,
+//     required Message sharedPostMessage,
+//     Message? message,
+//     PostAuthor? postAuthor,
+//   }) async 
+//   {
+//     final exists = await _powerSyncRepository.db().execute(
+//       '''
+// SELECT 1 FROM posts WHERE id = ?
+// ''',
+//       [id],
+//     );
+//     if (exists.isEmpty) return;
+//     final conversation = await _powerSyncRepository.db().execute(
+//       '''
+// SELECT conversation_id
+//   FROM participants
+// WHERE user_id = ?
+//   AND conversation_id IN (
+//       SELECT conversation_id
+//       FROM participants
+//       WHERE user_id = ?
+//     );
+// ''',
+//       [sender.id, receiver.id],
+//     );
+//     if (conversation.isNotEmpty) {
+//       final chatId = conversation.first['conversation_id'] as String;
+//       await Future.wait([
+//         sendMessage(
+//           chatId: chatId,
+//           sender: sender,
+//           receiver: receiver,
+//           message: sharedPostMessage,
+//           postAuthor: postAuthor,
+//         ),
+//         if (message != null)
+//           sendMessage(
+//             chatId: chatId,
+//             sender: sender,
+//             receiver: receiver,
+//             message: message,
+//           ),
+//       ]);
+//       return;
+//     }
+//     final newChatId = uuid.v4();
+//     final createdConversation = _powerSyncRepository.db().execute(
+//       '''
+// insert into
+//   conversations (id, type, name, created_at, updated_at)
+// values
+//   (?, ?, '', ?, ?)
+// ''',
+//       [newChatId, ChatType.oneOnOne.value, JiffyX.now(), JiffyX.now()],
+//     );
+//     final addParticipant1 = _powerSyncRepository.db().execute(
+//       '''
+// insert into
+//   participants (id, user_id, conversation_id)
+//   values
+//   (?, ?, ?)
+//   ''',
+//       [uuid.v4(), sender.id, newChatId],
+//     );
+//     final addParticipant2 = _powerSyncRepository.db().execute(
+//       '''
+// insert into
+//   participants (id, user_id, conversation_id)
+//   values
+//   (?, ?, ?)
+//   ''',
+//       [uuid.v4(), receiver.id, newChatId],
+//     );
+//     await createdConversation
+//         .whenComplete(() => Future.wait([addParticipant1, addParticipant2]));
+//
+//     await Future.wait([
+//       sendMessage(
+//         chatId: newChatId,
+//         sender: sender,
+//         receiver: receiver,
+//         message: sharedPostMessage,
+//         postAuthor: postAuthor,
+//       ),
+//       if (message != null)
+//         sendMessage(
+//           chatId: newChatId,
+//           sender: sender,
+//           receiver: receiver,
+//           message: message,
+//         ),
+//     ]);
+//   }
 
   @override
   Stream<List<Comment>> repliedCommentsOf({required String commentId}) =>
@@ -987,7 +993,7 @@ ORDER BY created_at ASC
 ''',
         parameters: [commentId],
       ).map(
-        (result) => result.safeMap(Comment.fromRow).toList(growable: false),
+            (result) => result.safeMap(Comment.fromRow).toList(growable: false),
       );
 
   @override
@@ -1009,79 +1015,6 @@ ORDER BY created_at ASC
           if (pushToken != null) 'push_token': pushToken,
         },
       );
-
-  @override
-  Future<void> createChat(
-      {required String userId, required String participantId}) {
-    // TODO: implement createChat
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> deleteChat({required String chatId, required String userId}) {
-    // TODO: implement deleteChat
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> deleteMessage({required String messageId}) {
-    // TODO: implement deleteMessage
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> editMessage(
-      {required Message oldMessage, required Message newMessage}) {
-    // TODO: implement editMessage
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<List<User>> getPostLikers(
-      {required String postId, int limit = 30, int offset = 0}) {
-    // TODO: implement getPostLikers
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<List<User>> getPostLikersInFollowings(
-      {required String postId, int limit = 3, int offset = 0}) {
-    // TODO: implement getPostLikersInFollowings
-    throw UnimplementedError();
-  }
-
-  @override
-  Stream<List<Message>> messagesOf({required String chatId}) {
-    // TODO: implement messagesOf
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> readMessage({required String messageId}) {
-    // TODO: implement readMessage
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<List<User>> searchUsers(
-      {required int limit,
-      required int offset,
-      required String? query,
-      String? userId,
-      String? excludeUserIds}) {
-    // TODO: implement searchUsers
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> sendMessage(
-      {required String chatId,
-      required User sender,
-      required User receiver,
-      required Message message}) {
-    // TODO: implement sendMessage
-    throw UnimplementedError();
-  }
 
 //   @override
 //   Stream<List<ChatInbox>> chatsOf({required String userId}) =>
@@ -1111,48 +1044,48 @@ ORDER BY created_at ASC
 //       ).map(
 //             (event) => event.safeMap(ChatInbox.fromRow).toList(growable: false),
 //       );
-//
-//   @override
-//   Stream<List<Message>> messagesOf({required String chatId}) =>
-//       _powerSyncRepository.db().watch(
-//         '''
-// SELECT
-//   m.*,
-//   m_sender.full_name as full_name,
-//   m_sender.username as username,
-//   m_sender.avatar_url as avatar_url,
-//   a.id as attachment_id,
-//   a.title as attachment_title,
-//   a.text as attachment_text,
-//   a.title_link as attachment_title_link,
-//   a.image_url as attachment_image_url,
-//   a.thumb_url as attachment_thumb_url,
-//   a.author_name as attachment_author_name,
-//   a.author_link as attachment_author_link,
-//   a.asset_url as attachment_asset_url,
-//   a.og_scrape_url as attachment_og_scrape_url,
-//   a.type as attachment_type,
-//   r.message as replied_message_message,
-//   p.caption as shared_post_caption,
-//   p.created_at as shared_post_created_at,
-//   p.media as shared_post_media,
-//   p_author.id as shared_post_author_id,
-//   p_author.username as shared_post_author_username,
-//   p_author.full_name as shared_post_author_full_name,
-//   p_author.avatar_url as shared_post_author_avatar_url
-// FROm
-//   messages m
-//   left join attachments a on m.id = a.message_id
-//   left join messages r on m.reply_message_id = r.id
-//   left join posts p on m.shared_post_id = p.id
-//   join profiles m_sender on m.from_id = m_sender.id
-//   left join profiles p_author on p.user_id = p_author.id
-// where
-//   m.conversation_id = ?
-// order by created_at asc
-// ''',
-//         parameters: [chatId],
-//       ).map((event) => event.safeMap(Message.fromRow).toList(growable: false));
+
+  @override
+  Stream<List<Message>> messagesOf({required String chatId}) =>
+      _powerSyncRepository.db().watch(
+        '''
+SELECT
+  m.*,
+  m_sender.full_name as full_name,
+  m_sender.username as username,
+  m_sender.avatar_url as avatar_url,
+  a.id as attachment_id,
+  a.title as attachment_title,
+  a.text as attachment_text,
+  a.title_link as attachment_title_link,
+  a.image_url as attachment_image_url,
+  a.thumb_url as attachment_thumb_url,
+  a.author_name as attachment_author_name,
+  a.author_link as attachment_author_link,
+  a.asset_url as attachment_asset_url,
+  a.og_scrape_url as attachment_og_scrape_url,
+  a.type as attachment_type,
+  r.message as replied_message_message,
+  p.caption as shared_post_caption,
+  p.created_at as shared_post_created_at,
+  p.media as shared_post_media,
+  p_author.id as shared_post_author_id,
+  p_author.username as shared_post_author_username,
+  p_author.full_name as shared_post_author_full_name,
+  p_author.avatar_url as shared_post_author_avatar_url
+FROm
+  messages m
+  left join attachments a on m.id = a.message_id
+  left join messages r on m.reply_message_id = r.id
+  left join posts p on m.shared_post_id = p.id
+  join profiles m_sender on m.from_id = m_sender.id
+  left join profiles p_author on p.user_id = p_author.id
+where
+  m.conversation_id = ?   
+order by created_at asc
+''',
+        parameters: [chatId],
+      ).map((event) => event.safeMap(Message.fromRow).toList(growable: false));
 //
 //   @override
 //   Future<void> createChat({
@@ -1201,84 +1134,84 @@ ORDER BY created_at ASC
 //     await createdConversation
 //         .whenComplete(() => Future.wait([addParticipant1, addParticipant2]));
 //   }
-//
-//   @override
-//   Future<void> deleteChat({
-//     required String chatId,
-//     required String userId,
-//   }) async {
-// //     final participants = (await _powerSyncRepository.db().get(
-// //       '''
-// // select
-// //   count(*) as participants_count
-// // from
-// //   participants
-// // where conversation_id = ?
-// // ''',
-// //       [chatId],
-// //     ))['participants_count'] as int;
-// //     if (participants >= 1) {
-// //       final isParticipantInConversation = await _powerSyncRepository.db()
-// // .get(
-// //         '''
-// // select
-// //   *
-// // from
-// //   participants
-// // where
-// //   user_id = ?
-// //   and conversation_id = ?
-// //   ''',
-// //         [userId, chatId],
-// //       );
-// //       if (isParticipantInConversation.isEmpty) return;
-// //       await _powerSyncRepository.db().execute(
-// //         '''
-// // delete from participants
-// // where
-// //   user_id = ?
-// //   and conversation_id = ?
-// // ''',
-// //         [userId, chatId],
-// //       );
-// //       return;
-// //     }
-//     await _powerSyncRepository.db().execute(
+
+  @override
+  Future<void> deleteChat({
+    required String chatId,
+    required String userId,
+  }) async {
+//     final participants = (await _powerSyncRepository.db().get(
 //       '''
-// delete from conversations
-// where
-//   id = ?
+// select
+//   count(*) as participants_count
+// from
+//   participants
+// where conversation_id = ?
 // ''',
 //       [chatId],
-//     );
-//   }
-//
-//   @override
-//   Future<void> deleteMessage({required String messageId}) =>
-//       _powerSyncRepository.db().execute(
+//     ))['participants_count'] as int;
+//     if (participants >= 1) {
+//       final isParticipantInConversation = await _powerSyncRepository.db()
+// .get(
 //         '''
-// delete from messages
+// select
+//   *
+// from
+//   participants
 // where
-//   id = ?
-// ''',
-//         [messageId],
+//   user_id = ?
+//   and conversation_id = ?
+//   ''',
+//         [userId, chatId],
 //       );
-//
-//   @override
-//   Future<void> readMessage({
-//     required String messageId,
-//   }) async {
-//     await _powerSyncRepository.db().execute(
-//       '''
-// UPDATE messages
-// SET
-//   is_read = 1
-// WHERE
-//   id = ?
+//       if (isParticipantInConversation.isEmpty) return;
+//       await _powerSyncRepository.db().execute(
+//         '''
+// delete from participants
+// where
+//   user_id = ?
+//   and conversation_id = ?
 // ''',
-//       [messageId],
-//     );
-//   }
+//         [userId, chatId],
+//       );
+//       return;
+//     }
+    await _powerSyncRepository.db().execute(
+      '''
+delete from conversations
+where
+  id = ?
+''',
+      [chatId],
+    );
+  }
+
+  @override
+  Future<void> deleteMessage({required String messageId}) =>
+      _powerSyncRepository.db().execute(
+        '''
+delete from messages
+where
+  id = ?
+''',
+        [messageId],
+      );
+
+  @override
+  Future<void> readMessage({
+    required String messageId,
+  }) async {
+    await _powerSyncRepository.db().execute(
+      '''
+UPDATE messages
+SET
+  is_read = 1
+WHERE
+  id = ?
+''',
+      [messageId],
+    );
+  }
 //
 //   @override
 //   Future<void> sendMessage({
@@ -1293,7 +1226,7 @@ ORDER BY created_at ASC
 //           '''
 // insert into
 //   messages (
-//     id, conversation_id, from_id, type, message, reply_message_id, created_at,
+//     id, conversation_id, from_id, type, message, reply_message_id, created_at, 
 //     updated_at, is_read, is_deleted, is_edited, reply_message_username,
 //     reply_message_attachment_url, shared_post_id
 //     )
@@ -1525,33 +1458,33 @@ ORDER BY created_at ASC
 //       );
 //     }
 //   }
-//
-//   @override
-//   Future<List<User>> searchUsers({
-//     required int limit,
-//     required int offset,
-//     required String? query,
-//     String? userId,
-//     String? excludeUserIds,
-//   }) async {
-//     if (query == null || query.trim().isEmpty) return <User>[];
-//     query = query.removeSpecialCharacters();
-//     final excludeUserIdsStatement =
-//     excludeUserIds == null ? '' : 'AND id NOT IN ($excludeUserIds)';
-//
-//     final result = await _powerSyncRepository.db().getAll(
-//       '''
-// SELECT id, avatar_url, full_name, username
-//   FROM profiles
-// WHERE (LOWER(username) LIKE LOWER('%$query%') OR LOWER(full_name) LIKE LOWER('%$query%'))
-//   AND id <> ?1 $excludeUserIdsStatement
-// LIMIT ?2 OFFSET ?3
-// ''',
-//       [currentUserId, limit, offset],
-//     );
-//
-//     return result.safeMap(User.fromJson).toList(growable: false);
-//   }
+
+  @override
+  Future<List<User>> searchUsers({
+    required int limit,
+    required int offset,
+    required String? query,
+    String? userId,
+    String? excludeUserIds,
+  }) async {
+    if (query == null || query.trim().isEmpty) return <User>[];
+    query = query.removeSpecialCharacters();
+    final excludeUserIdsStatement =
+    excludeUserIds == null ? '' : 'AND id NOT IN ($excludeUserIds)';
+
+    final result = await _powerSyncRepository.db().getAll(
+      '''
+SELECT id, avatar_url, full_name, username
+  FROM profiles
+WHERE (LOWER(username) LIKE LOWER('%$query%') OR LOWER(full_name) LIKE LOWER('%$query%'))
+  AND id <> ?1 $excludeUserIdsStatement 
+LIMIT ?2 OFFSET ?3
+''',
+      [currentUserId, limit, offset],
+    );
+
+    return result.safeMap(User.fromJson).toList(growable: false);
+  }
 //
 //   @override
 //   Future<void> createStory({
@@ -1593,7 +1526,7 @@ ORDER BY created_at ASC
 //   }) =>
 //       _powerSyncRepository.db().watch(
 //         '''
-// SELECT
+// SELECT 
 //   s.*${includeAuthor ? ', p.id as user_id, p.username, p.full_name, p.avatar_url' : ''}
 // FROM stories s
 //   ${includeAuthor ? 'LEFT JOIN profiles p ON s.user_id = p.id' : ''}
@@ -1601,75 +1534,87 @@ ORDER BY created_at ASC
 // ''',
 //         parameters: [userId],
 //       ).map((event) => event.safeMap(Story.fromJson).toList(growable: false));
-//
-//   @override
-//   Future<String> uploadStoryMedia({
-//     required String storyId,
-//     required File imageFile,
-//     required Uint8List imageBytes,
-//   }) async {
-//     final stories = _powerSyncRepository.supabase.storage.from('stories');
-//     final imageExtension = imageFile.path.split('.').last.toLowerCase();
-//     final imagePath = '$storyId/image';
-//
-//     await stories.uploadBinary(
-//       imagePath,
-//       imageBytes,
-//       fileOptions: FileOptions(
-//         contentType: 'image/$imageExtension',
-//         cacheControl: '9000000',
-//       ),
-//     );
-//     return stories.getPublicUrl(imagePath);
-//   }
-//
-//   @override
-//   Future<List<User>> getPostLikers({
-//     required String postId,
-//     int limit = 30,
-//     int offset = 0,
-//   }) async {
-//     final result = await _powerSyncRepository.db().getAll(
-//       '''
-// SELECT up.id, up.username, up.full_name, up.avatar_url
-// FROM profiles up
-// INNER JOIN likes l ON up.id = l.user_id
-// INNER JOIN posts p ON l.post_id = p.id
-// WHERE p.post_id ?
-// LIMIT ? OFFSET ?
-// ''',
-//       [postId, limit, offset],
-//     );
-//     if (result.isEmpty) return [];
-//     return result.safeMap(User.fromJson).toList(growable: false);
-//   }
-//
-//   @override
-//   Future<List<User>> getPostLikersInFollowings({
-//     required String postId,
-//     int limit = 3,
-//     int offset = 0,
-//   }) async {
-//     final result = await _powerSyncRepository.db().getAll(
-//       '''
-// SELECT id, avatar_url, username, full_name
-// FROM profiles
-// WHERE id IN (
-//     SELECT l.user_id
-//     FROM likes l
-//     WHERE l.post_id = ?1
-//     AND EXISTS (
-//         SELECT *
-//         FROM subscriptions f
-//         WHERE f.subscribed_to_id = l.user_Id
-//         AND f.subscriber_id = ?2
-//     ) AND id <> ?2
-// )
-// LIMIT ?3 OFFSET ?4
-// ''',
-//       [postId, currentUserId, limit, offset],
-//     );
-//     if (result.isEmpty) return [];
-//     return result.safeMap(User.fromJson).toList(growable: false);
-//   }
+
+  @override
+  Future<String> uploadStoryMedia({
+    required String storyId,
+    required File imageFile,
+    required Uint8List imageBytes,
+  }) async {
+    final stories = _powerSyncRepository.supabase.storage.from('stories');
+    final imageExtension = imageFile.path.split('.').last.toLowerCase();
+    final imagePath = '$storyId/image';
+
+    await stories.uploadBinary(
+      imagePath,
+      imageBytes,
+      fileOptions: FileOptions(
+        contentType: 'image/$imageExtension',
+        cacheControl: '9000000',
+      ),
+    );
+    return stories.getPublicUrl(imagePath);
+  }
+
+  @override
+  Future<List<User>> getPostLikers({
+    required String postId,
+    int limit = 30,
+    int offset = 0,
+  }) async {
+    final result = await _powerSyncRepository.db().getAll(
+      '''
+SELECT up.id, up.username, up.full_name, up.avatar_url
+FROM profiles up
+INNER JOIN likes l ON up.id = l.user_id
+INNER JOIN posts p ON l.post_id = p.id
+WHERE p.post_id ?
+LIMIT ? OFFSET ?
+''',
+      [postId, limit, offset],
+    );
+    if (result.isEmpty) return [];
+    return result.safeMap(User.fromJson).toList(growable: false);
+  }
+
+  @override
+  Future<List<User>> getPostLikersInFollowings({
+    required String postId,
+    int limit = 3,
+    int offset = 0,
+  }) async {
+    final result = await _powerSyncRepository.db().getAll(
+      '''
+SELECT id, avatar_url, username, full_name
+FROM profiles
+WHERE id IN (
+    SELECT l.user_id
+    FROM likes l
+    WHERE l.post_id = ?1
+    AND EXISTS (
+        SELECT *
+        FROM subscriptions f
+        WHERE f.subscribed_to_id = l.user_Id
+        AND f.subscriber_id = ?2
+    ) AND id <> ?2
+)
+LIMIT ?3 OFFSET ?4
+''',
+      [postId, currentUserId, limit, offset],
+    );
+    if (result.isEmpty) return [];
+    return result.safeMap(User.fromJson).toList(growable: false);
+  }
+
+  @override
+  Future<void> createChat({required String userId, required String participantId}) {
+    // TODO: implement createChat
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> editMessage({required Message oldMessage, required Message newMessage}) {
+    // TODO: implement editMessage
+    throw UnimplementedError();
+  }
 }
