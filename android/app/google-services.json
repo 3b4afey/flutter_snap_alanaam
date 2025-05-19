@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "206864610582",
+    "project_id": "flutter-snap-prod-5797d",
+    "storage_bucket": "flutter-snap-prod-5797d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:206864610582:android:0e0c6ec43cad7290660c37",
+        "android_client_info": {
+          "package_name": "com.snapAlanaam.fluttersnapalanaam"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "206864610582-m7ij2254thrb62b91ufcj2r9av702cp6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBc3X9xekxgsZjEG0NfZFJwVLO9M9p7n84"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "206864610582-m7ij2254thrb62b91ufcj2r9av702cp6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

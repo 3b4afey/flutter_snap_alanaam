@@ -1,0 +1,47 @@
+name: snap_alanaam_blocks_ui
+description: A Very Good Project created by Very Good CLI.
+version: 0.1.0+1
+publish_to: none
+
+environment:
+  sdk: ^3.5.0
+  flutter: ^3.24.0
+
+dependencies:
+  app_ui:
+    path: ../app_ui
+  avatar_stack: ^1.2.0
+  carousel_slider: ^5.0.0
+  flutter_animate: ^4.4.0
+  flutter_blurhash: ^0.8.2
+  inview_notifier_list:
+    git: https://github.com/Gambley1/inview_notifier_list
+  marquee: ^2.2.3
+  octo_image: ^2.0.0
+  path_provider: ^2.1.2
+  pinch_zoom_release_unzoom: ^1.0.1
+  scrollable_positioned_list: ^0.3.8
+  sliver_tools: ^0.2.12
+  smooth_page_indicator: ^1.1.0
+  smooth_video_progress: ^0.0.4
+  sprung: ^3.0.1
+  url_launcher: ^6.2.3
+  user_repository:
+    path: ../user_repository
+  video_player: ^2.8.2
+  visibility_detector: ^0.4.0+2
+  shared:
+    path: ../shared
+  powersync_repository:
+    path: ../powersync_repository
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mocktail: ^1.0.4
+  shimmer: ^3.0.0
+  cached_memory_image: ^1.5.0
+  cached_network_image: ^3.3.1
+  very_good_analysis: ^6.0.0

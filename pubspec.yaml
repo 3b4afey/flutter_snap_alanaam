@@ -1,0 +1,109 @@
+name: flutter_snap_alanaam
+description: A Very Good Project created by Very Good CLI.
+version: 1.0.0+1
+publish_to: none
+
+environment:
+  sdk: ^3.5.0
+
+dependencies:
+  animations: ^2.0.11
+  async: ^2.12.0
+  bloc: ^8.1.4
+  firebase_remote_config_repository:
+    path: packages/firebase_remote_config_repository
+  cached_memory_image: ^1.5.0
+  cached_network_image: ^3.4.1
+  carousel_slider: ^5.0.0
+  collection: ^1.19.1
+  chats_repository:
+    path: packages/chats_repository
+  env:
+    path: packages/env
+  equatable: ^2.0.7
+  fast_immutable_collections: ^11.0.4
+  firebase_core: ^3.13.0
+  firebase_messaging: ^15.2.5
+  firebase_remote_config: ^5.4.3
+  flex_color_scheme: ^7.3.1
+  flutter:
+    sdk: flutter
+  flutter_animate: ^4.5.2
+  flutter_bloc: ^8.1.4
+  flutter_localizations:
+    sdk: flutter
+  flutter_portal: ^1.1.4
+  flutter_staggered_grid_view: ^0.7.0
+  go_router: ^13.2.5
+  google_sign_in: ^6.3.0
+  hydrated_bloc: ^9.1.5
+  flutter_svg: ^2.1.0
+  get_it: ^8.0.3
+  intl: ">=0.18.0 <=0.19.0"
+  inview_notifier_list:
+    git: https://github.com/Gambley1/inview_notifier_list
+  json_annotation: ^4.9.0
+  lottie: ^3.3.1
+  ogp_data_extract: ^0.1.4
+  path_provider: ^2.1.5
+  app_ui:
+    path: packages/app_ui
+  api_repository:
+    path: packages/api_repository
+  powersync_repository:
+    path: packages/powersync_repository
+  scrollable_positioned_list: ^0.3.8
+  shared:
+    path: packages/shared
+  shimmer: ^3.0.0
+  slang: ^4.7.1
+  slang_flutter: ^4.7.0
+  sliver_tools: ^0.2.12
+  sprung: ^3.0.1
+  story_view: ^0.16.5
+  timeago: ^3.7.0
+  url_launcher: ^6.3.1
+  database_client:
+    path: packages/database_client
+  posts_repository:
+    path: packages/posts_repository
+  vector_math: ^2.1.4
+  visibility_detector: ^0.4.0+2
+  google_nav_bar: ^5.0.7
+
+dependency_overrides:
+  fading_edge_scrollview: ^4.1.1
+
+dev_dependencies:
+  token_storage:
+    path: packages/authentication_client/token_storage
+  snap_alanaam_blocks_ui:
+    path: packages/snap_alanaam_blocks_ui
+  snap_blocks:
+    path: packages/snap_blocks
+  supabase_authentication_client:
+    path: packages/authentication_client/supabase_authentication_client
+  user_repository:
+    path: packages/user_repository
+
+  form_fields:
+    path: packages/form_fields
+  bloc_test: ^9.1.7
+
+  build_runner: ^2.4.15
+  build_verify: ^3.1.0
+  flutter_test:
+    sdk: flutter
+  json_serializable: ^6.9.5
+  mocktail: ^1.0.4
+  slang_build_runner: ^4.7.0
+  very_good_analysis: ^7.0.0
+  google_nav_bar: ^5.0.7
+  line_icons: ^2.0.3
+
+
+
+flutter:
+  uses-material-design: true
+  generate: true
+

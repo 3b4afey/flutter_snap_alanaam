@@ -1,0 +1,23 @@
+{
+  "@@locale": "ar",
+  "hello": "Hello",
+  "emailText": "البريد الألكتروني",
+  "loginWelcome": "تسجيل الدخول",
+  "emailHint": "ادخل بريدك الالكتروني",
+  "passwordText": "كلمة المرور",
+  "loginText": "تسجيل الدخول",
+  "alreadyHaveAccountText": "هل لديك حساب بالفعل ؟",
+  "noAccountText": "Dont have an account?",
+  "signUpText": "Sign up",
+  "forgotPasswordText": "هل نسيت كلمة المرور ؟",
+  "signInWithText": "{provider}",
+    "@signInWithText": {
+      "placeholders": {
+        "provider": {
+          "type": "String",
+          "example": "Google"
+        }
+      }
+    }
+
+}

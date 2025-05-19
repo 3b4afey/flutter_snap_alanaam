@@ -1,0 +1,10 @@
+export 'view/sign_up_view.dart';
+export 'view/widgets/already_have_an_account_button.dart';
+export 'view/widgets/sign_up_button.dart';
+export 'view/widgets/sign_up_email_form_field.dart';
+export 'view/widgets/sign_up_form.dart';
+export 'view/widgets/sign_up_full_name_form_field.dart';
+export 'view/widgets/sign_up_page.dart';
+export 'view/widgets/sign_up_password_form_field.dart';
+export 'view/widgets/sign_up_user_name_form_field.dart';
+export 'view_model/sign_up_cubit/sign_up_cubit.dart';

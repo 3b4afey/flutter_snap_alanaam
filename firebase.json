@@ -1,0 +1,50 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "flutter-snap-stg-6fb4a",
+          "appId": "1:498488077146:android:e5c6cdda7f30e84a8a6163",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "flutter-snap-dev",
+          "configurations": {
+            "android": "1:973744958603:android:2d0f02bcaca5d987e6f88e",
+            "ios": "1:973744958603:ios:4837de87f4a2a806e6f88e"
+          }
+        },
+        "lib/firebase_options_prod.dart": {
+          "projectId": "flutter-snap-prod-5797d",
+          "configurations": {
+            "android": "1:206864610582:android:0e0c6ec43cad7290660c37",
+            "ios": "1:206864610582:ios:d2ef4ec6c10d36b9660c37"
+          }
+        },
+        "lib/firebase_options_dev.dart": {
+          "projectId": "flutter-snap-env",
+          "configurations": {
+            "android": "1:1017599447966:android:20ca3b7d6fffcab41d3c8f",
+            "ios": "1:1017599447966:ios:fa1bdb0636d9df421d3c8f"
+          }
+        },
+        "lib/firebase_options_stag.dart": {
+          "projectId": "flutter-snap-stg",
+          "configurations": {
+            "android": "1:250198135767:android:8979f729ece3c493103192",
+            "ios": "1:250198135767:ios:4aca530b2aa16f04103192"
+          }
+        },
+        "lib/firebase_options_stg.dart": {
+          "projectId": "flutter-snap-stg-6fb4a",
+          "configurations": {
+            "android": "1:498488077146:android:e5c6cdda7f30e84a8a6163",
+            "ios": "1:498488077146:ios:d5e3d9b1bec1290c8a6163"
+          }
+        }
+      }
+    }
+  }
+}
