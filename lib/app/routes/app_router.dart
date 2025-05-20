@@ -1,7 +1,6 @@
 // ignore_for_file: lines_longer_than_80_chars
 
 import 'dart:async';
-
 import 'package:animations/animations.dart';
 import 'package:app_ui/app_ui.dart';
 import 'package:firebase_remote_config_repository/firebase_remote_config_repository.dart';
@@ -14,6 +13,7 @@ import 'package:flutter_snap_alanaam/features/feed/post/post.dart';
 import 'package:flutter_snap_alanaam/features/home/presentation/home.dart';
 import 'package:flutter_snap_alanaam/features/reels/reels.dart';
 
+import 'package:snap_blocks/snap_blocks.dart' hide FeedPage;
 // import 'package:flutter_snap_alanaam/features/stories/stories.dart';
 import 'package:flutter_snap_alanaam/features/timeline/timeline.dart';
 import 'package:flutter_snap_alanaam/features/user_profile/user_profile.dart';
@@ -124,16 +124,16 @@ class AppRouter {
           //     );
           //   },
           // ),
-          // GoRoute(
-          //   path: AppRoutes.postEdit.path!,
-          //   name: AppRoutes.postEdit.name,
-          //   parentNavigatorKey: _rootNavigatorKey,
-          //   pageBuilder: (context, state) {
-          //     final post = state.extra! as PostBlock;
-          //
-          //     return NoTransitionPage(child: PostEditPage(post: post));
-          //   },
-          // ),
+          GoRoute(
+            path: AppRoutes.postEdit.path!,
+            name: AppRoutes.postEdit.name,
+            parentNavigatorKey: _rootNavigatorKey,
+            pageBuilder: (context, state) {
+              final post = state.extra! as PostBlock;
+
+              return NoTransitionPage(child: PostEditPage(post: post));
+            },
+          ),
           // GoRoute(
           //   path: AppRoutes.stories.path!,
           //   name: AppRoutes.stories.name,

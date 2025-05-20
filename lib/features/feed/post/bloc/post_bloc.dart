@@ -1,9 +1,11 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:posts_repository/posts_repository.dart';
 import 'package:shared/shared.dart';
 import 'package:user_repository/user_repository.dart';
+import 'package:snap_blocks/snap_blocks.dart';
 
 part 'post_bloc.g.dart';
 part 'post_event.dart';
@@ -138,7 +140,7 @@ class PostBloc extends HydratedBloc<PostEvent, PostState> {
           await _postsRepository.updatePost(id: id, caption: event.caption);
 
       if (post != null) {
-        // event.onPostUpdated?.call(post.toPostLargeBlock);
+        event.onPostUpdated?.call(post.toPostLargeBlock);
       }
       emit(state.copyWith(status: PostStatus.success));
     } catch (error, stackTrace) {

@@ -20,12 +20,10 @@ final class PostIsLikedSubscriptionRequested extends PostEvent {
 }
 
 final class PostUpdateRequested extends PostEvent {
-  const PostUpdateRequested({this.caption});
-
-  // const PostUpdateRequested({this.caption, this.onPostUpdated});
+  const PostUpdateRequested({this.caption, this.onPostUpdated});
 
   final String? caption;
-// final ValueSetter<PostBlock>? onPostUpdated;
+  final ValueSetter<PostBlock>? onPostUpdated;
 }
 
 final class PostAuthorFollowingStatusSubscriptionRequested extends PostEvent {
@@ -68,12 +66,12 @@ final class PostShareRequested extends PostEvent {
     required this.sender,
     required this.message,
     required this.receiver,
-    // this.postAuthor,
+    this.postAuthor,
   });
 
   final User sender;
   final User receiver;
   final Message sharedPostMessage;
   final Message? message;
-// final PostAuthor? postAuthor;
+  final PostAuthor? postAuthor;
 }

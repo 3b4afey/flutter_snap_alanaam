@@ -1,11 +1,13 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_snap_alanaam/features/feed/feed.dart';
 import 'package:flutter_snap_alanaam/features/feed/post/bloc/post_bloc.dart';
 import 'package:flutter_snap_alanaam/features/feed/post/post.dart';
 import 'package:flutter_snap_alanaam/l10n/l10n.dart';
 import 'package:go_router/go_router.dart';
 import 'package:posts_repository/posts_repository.dart';
+import 'package:shared/shared.dart';
 import 'package:snap_alanaam_blocks_ui/snap_alanaam_blocks_ui.dart';
 import 'package:snap_blocks/snap_blocks.dart';
 import 'package:user_repository/user_repository.dart';
@@ -59,17 +61,19 @@ class _PostEditViewState extends State<PostEditView> {
       context.read<PostBloc>().add(
             PostUpdateRequested(
               caption: value,
-              // onPostUpdated: (block) {
-              //   context.read<FeedBloc>().add(
-              //         FeedUpdateRequested(
-              //           update: FeedPageUpdate(
-              //             newPost: block.toPost,
-              //             type: PageUpdateType.update,
-              //           ),
-              //         ),
-              //       );
-              //   context.pop();
-              // },
+              onPostUpdated: (block) {
+                print('bent elmtnaka1');
+                context.read<FeedBloc>().add(
+                      FeedUpdateRequested(
+                        update: FeedPageUpdate(
+                          newPost: block.toPost,
+                          type: PageUpdateType.update,
+                        ),
+                      ),
+                    );
+                print('bent elmtnaka2');
+                context.pop();
+              },
             ),
           );
     }

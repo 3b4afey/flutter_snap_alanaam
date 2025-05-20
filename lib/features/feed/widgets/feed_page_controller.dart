@@ -3,6 +3,9 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_alanaam/features/feed/feed.dart';
+import 'package:flutter_snap_alanaam/features/feed/post/video/video.dart';
+import 'package:flutter_snap_alanaam/features/feed/post/video/widgets/video_player_inherited_widget.dart';
+import 'package:go_router/go_router.dart';
 import 'package:powersync_repository/powersync_repository.dart';
 import 'package:shared/shared.dart';
 
@@ -28,14 +31,12 @@ class FeedPageController extends ChangeNotifier {
   double _animationValue = 0;
 
   bool get hasPlayedAnimation => _hasPlayedAnimation;
-
   set hasPlayedAnimation(bool value) {
     _hasPlayedAnimation = value;
     notifyListeners();
   }
 
   double get animationValue => _animationValue;
-
   set animationValue(double value) {
     _animationValue = value;
     notifyListeners();
@@ -48,45 +49,39 @@ class FeedPageController extends ChangeNotifier {
   }
 
   void scrollToTop() => _nestedScrollController.animateTo(
-        0,
-        duration: 250.ms,
-        curve: Curves.ease,
-      );
+    0,
+    duration: 250.ms,
+    curve: Curves.ease,
+  );
 
-  Future<void> processPostMedia(
-      {required List<SelectedByte> selectedFiles,
-      required String postId,
-      required String caption,
-      required bool pickVideo,
-      required BuildContext contextx}) async {
+  Future<void> processPostMedia({
+    required List<SelectedByte> selectedFiles,
+    required String postId,
+    required String caption,
+    required bool pickVideo,
+  }) async {
     final isReel =
         selectedFiles.length == 1 && selectedFiles.every((e) => !e.isThatImage);
-    // final navigateToReelPage = isReel;
-    // StatefulNavigationShell.of(contextx)
-    //     .goBranch(navigateToReelPage ? 3 : 0, initialLocation: true);
-    // if (pickVideo) {
-    //   VideoPlayerInheritedWidget.of(contextx).videoPlayerState.playReels();
-    // }
+    final navigateToReelPage = isReel;
+    StatefulNavigationShell.of(_context)
+        .goBranch(navigateToReelPage ? 3 : 0, initialLocation: true);
+    if (pickVideo) {
+      VideoPlayerInheritedWidget.of(_context).videoPlayerState.playReels();
+    }
 
     late final postId = uuid.v4();
 
-    void uploadPost(
-        {required List<Map<String, dynamic>> media,
-        required BuildContext contextx}) {
-      print('+++++++++++++++++++++ uploading');
-      contextx.read<FeedBloc>().add(
-            FeedPostCreateRequested(
-              postId: postId,
-              caption: caption,
-              media: media,
-            ),
-          );
-      print('+++++++++++++++++++++ finished');
-    }
+    void uploadPost({required List<Map<String, dynamic>> media}) =>
+        _context.read<FeedBloc>().add(
+          FeedPostCreateRequested(
+            postId: postId,
+            caption: caption,
+            media: media,
+          ),
+        );
 
     late final storage = Supabase.instance.client.storage.from('posts');
-    print('the video is reel ?');
-    print(isReel);
+
     if (isReel) {
       try {
         final mediaPath = '$postId/video_0';
@@ -99,9 +94,9 @@ class FeedPageController extends ChangeNotifier {
             ? ''
             : await BlurHashPlus.blurHashEncode(firstFrame);
         final compressedVideo = (await VideoPlus.compressVideo(
-              selectedFile.selectedFile,
-            ))
-                ?.file ??
+          selectedFile.selectedFile,
+        ))
+            ?.file ??
             selectedFile.selectedFile;
         final compressedVideoBytes = await PickImage().imageBytes(
           file: compressedVideo,
@@ -143,10 +138,7 @@ class FeedPageController extends ChangeNotifier {
             'first_frame_url': firstFrameUrl,
           }
         ];
-        print('+++++++++++++++++++++ the media is ');
-        print(media);
-
-        uploadPost(media: media, contextx: contextx);
+        uploadPost(media: media);
       } catch (error, stackTrace) {
         logE(
           'Failed to create reel!',
@@ -169,15 +161,15 @@ class FeedPageController extends ChangeNotifier {
           blurHash = convertedBytes == null
               ? ''
               : await BlurHashPlus.blurHashEncode(
-                  convertedBytes,
-                );
+            convertedBytes,
+          );
         } else {
           blurHash = await BlurHashPlus.blurHashEncode(
             selectedByte,
           );
         }
         late final mediaExtension =
-            selectedFile.path.split('.').last.toLowerCase();
+        selectedFile.path.split('.').last.toLowerCase();
 
         late final mediaPath = '$postId/${!isVideo ? 'image_$i' : 'video_$i'}';
 
@@ -224,7 +216,7 @@ class FeedPageController extends ChangeNotifier {
           firstFrameUrl = storage.getPublicUrl(firstFramePath);
         }
         final mediaType =
-            isVideo ? VideoMedia.identifier : ImageMedia.identifier;
+        isVideo ? VideoMedia.identifier : ImageMedia.identifier;
         if (isVideo) {
           media.add({
             'media_id': uuid.v4(),
@@ -242,7 +234,7 @@ class FeedPageController extends ChangeNotifier {
           });
         }
       }
-      uploadPost(media: media, contextx: contextx);
+      uploadPost(media: media);
     }
   }
 }
