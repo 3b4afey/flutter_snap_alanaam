@@ -34,6 +34,7 @@ class ReelView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return PostView(
       key: ValueKey(block.id),
       block: block,
@@ -111,7 +112,6 @@ class _ReelState extends State<Reel> {
   @override
   Widget build(BuildContext context) {
     final block = widget.block;
-
     return ValueListenableBuilder<bool>(
       valueListenable: _isLiked,
       child: GestureDetector(
@@ -126,7 +126,7 @@ class _ReelState extends State<Reel> {
                 shouldPlay: widget.play,
                 blurHash: block.reel.blurHash,
                 withSound: widget.withSound || true,
-                aspectRatio: 9 / 15,
+                 aspectRatio: 9 / 17,
                 withSoundButton: false,
                 withPlayerController: false,
                 videoPlayerController: _videoController,
@@ -411,6 +411,11 @@ class ReelAuthorListTile extends StatelessWidget {
         //   withAdaptiveBorder: false,
         //   enableInactiveBorder: false,
         // ),
+        UserProfileAvatar(
+          avatarUrl: author.avatarUrl,
+          userId: author.id,
+          isLarge: false,
+        ),
         Flexible(
           flex: 4,
           child: Text.rich(

@@ -28,6 +28,8 @@ abstract class InstaBlock {
         return PostSmallBlock.fromJson(json);
       case PostSponsoredBlock.identifier:
         return PostSponsoredBlock.fromJson(json);
+      case PostReelBlock.identifier:
+        return PostReelBlock.fromJson(json);
       case DividerHorizontalBlock.identifier:
         return DividerHorizontalBlock.fromJson(json);
       case SectionHeaderBlock.identifier:

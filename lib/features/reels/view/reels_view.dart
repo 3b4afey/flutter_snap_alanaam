@@ -65,7 +65,9 @@ class _ReelsViewState extends State<ReelsView> {
               if (blocks.isEmpty) {
                 return const NoReelsFound();
               }
+
               return RefreshIndicator.adaptive(
+
                 onRefresh: () async {
                   context
                       .read<FeedBloc>()
@@ -86,6 +88,7 @@ class _ReelsViewState extends State<ReelsView> {
                   physics: const AlwaysScrollableScrollPhysics(),
                   onPageChanged: (index) => _currentIndex.value = index,
                   itemBuilder: (context, index) {
+
                     return ListenableBuilder(
                       listenable: Listenable.merge(
                         [

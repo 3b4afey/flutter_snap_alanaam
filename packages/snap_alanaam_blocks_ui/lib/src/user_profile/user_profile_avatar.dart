@@ -21,7 +21,7 @@ class UserProfileAvatar extends StatelessWidget {
     this.radius,
     this.resizeHeight,
     this.resizeWidth,
-    this.isLarge = true,
+    this.isLarge = false,
     this.onTapPickImage = false,
     this.strokeWidth,
     this.onTap,

@@ -18,6 +18,7 @@ export 'view/widgets/user_profile_header.dart';
 export 'view/widgets/user_profile_list_tile.dart';
 export 'view/widgets/user_profile_page.dart';
 export 'view/widgets/user_profile_pic.dart';
+export 'view/widgets/user_profile_posts_page.dart';
 export 'view/widgets/user_profile_props.dart';
 export 'view/widgets/user_profile_settings_button.dart';
 export 'view/widgets/user_sliver_app_bar.dart';

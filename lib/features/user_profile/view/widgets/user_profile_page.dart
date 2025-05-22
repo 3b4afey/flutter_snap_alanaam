@@ -20,6 +20,7 @@ class UserProfilePage extends StatefulWidget {
 class _UserProfilePageState extends State<UserProfilePage>
     with SingleTickerProviderStateMixin {
   late ScrollController _nestedScrollController;
+  UserProfileProps get props => widget.props;
 
   @override
   void initState() {
@@ -83,12 +84,8 @@ class _UserProfilePageState extends State<UserProfilePage>
                 },
                 body: TabBarView(
                   children: [
-                    Center(
-                      child: Text('here will be My posts'),
-                    ),
-                    Center(
-                      child: Text('here will be the fav posts'),
-                    )
+                    PostsPage(sponsoredPost: props.sponsoredPost,),
+                    UserProfileMentionedPostsPage(),
                   ],
                 ))));
   }

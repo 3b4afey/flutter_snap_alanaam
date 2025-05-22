@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:snap_blocks/snap_blocks.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:posts_repository/posts_repository.dart';
@@ -55,16 +55,16 @@ class UserProfileBloc extends Bloc<UserProfileEvent, UserProfileState> {
 
   bool get isOwner => _userId == _userRepository.currentUserId;
 
-  // Stream<List<PostBlock>> userPosts({bool small = true}) {
-  //   if (small) {
-  //     return _postsRepository
-  //         .postsOf(userId: _userId)
-  //         .map((posts) => posts.map((e) => e.toPostSmallBlock).toList());
-  //   }
-  //   return _postsRepository
-  //       .postsOf(userId: _userId)
-  //       .map((posts) => posts.map((e) => e.toPostLargeBlock).toList());
-  // }
+  Stream<List<PostBlock>> userPosts({bool small = true}) {
+    if (small) {
+      return _postsRepository
+          .postsOf(userId: _userId)
+          .map((posts) => posts.map((e) => e.toPostSmallBlock).toList());
+    }
+    return _postsRepository
+        .postsOf(userId: _userId)
+        .map((posts) => posts.map((e) => e.toPostLargeBlock).toList());
+  }
 
   Future<void> _onUserProfileSubscriptionRequested(
     UserProfileSubscriptionRequested event,
