@@ -9,6 +9,7 @@ import 'package:flutter_snap_alanaam/features/feed/feed.dart';
 import 'package:flutter_snap_alanaam/selector/selector.dart';
 // import 'package:flutter_snap_alanaam/notifications_repository.dart';
 import 'package:posts_repository/posts_repository.dart';
+import 'package:search_repository/search_repository.dart';
 // import 'package:search_repository/search_repository.dart';
 // import 'package:stories_repository/stories_repository.dart';
 import 'package:user_repository/user_repository.dart';
@@ -27,7 +28,7 @@ class App extends StatelessWidget {
     required this.postsRepository,
     // required this.chatsRepository,
     // required this.storiesRepository,
-    // required this.searchRepository,
+    required this.searchRepository,
     // required this.notificationsRepository,
     required this.firebaseRemoteConfigRepository,
     super.key,
@@ -39,7 +40,7 @@ class App extends StatelessWidget {
 
   // final ChatsRepository chatsRepository;
   // final StoriesRepository storiesRepository;
-  // final SearchRepository searchRepository;
+  final SearchRepository searchRepository;
   // final NotificationsRepository notificationsRepository;
   final FirebaseRemoteConfigRepository firebaseRemoteConfigRepository;
 
@@ -51,7 +52,7 @@ class App extends StatelessWidget {
         RepositoryProvider.value(value: postsRepository),
         // RepositoryProvider.value(value: chatsRepository),
         // RepositoryProvider.value(value: storiesRepository),
-        // RepositoryProvider.value(value: searchRepository),
+        RepositoryProvider.value(value: searchRepository),
         // RepositoryProvider.value(value: notificationsRepository),
         RepositoryProvider.value(value: firebaseRemoteConfigRepository),
       ],

@@ -16,7 +16,7 @@ List<GButton> mainNavigationBarItems() => [
         icon: Icons.add_box_outlined,
       ),
       const GButton(
-        icon: Icons.notifications,
+        icon: Icons.search,
       ),
       const GButton(
         icon: LineIcons.user,

@@ -12,6 +12,7 @@ import 'package:flutter_snap_alanaam/features/feed/feed.dart';
 import 'package:flutter_snap_alanaam/features/feed/post/post.dart';
 import 'package:flutter_snap_alanaam/features/home/presentation/home.dart';
 import 'package:flutter_snap_alanaam/features/reels/reels.dart';
+import 'package:flutter_snap_alanaam/features/search/search.dart';
 
 import 'package:snap_blocks/snap_blocks.dart' hide FeedPage;
 // import 'package:flutter_snap_alanaam/features/stories/stories.dart';
@@ -193,64 +194,37 @@ class AppRouter {
                     pageBuilder: (context, state) {
                       return CustomTransitionPage(
                         key: state.pageKey,
-                        // child: const FeedPage(),
-                        child: AppScaffold(
-                            body: Center(
-                          child: Text(' timeline Props '),
-                        )),
-
+                        child: const TimelinePage(),
                         transitionsBuilder:
                             (context, animation, secondaryAnimation, child) {
-                          return SharedAxisTransition(
-                            animation: animation,
-                            secondaryAnimation: secondaryAnimation,
-                            transitionType: SharedAxisTransitionType.horizontal,
+                          return FadeTransition(
+                            opacity: CurveTween(
+                              curve: Curves.easeInOut,
+                            ).animate(animation),
                             child: child,
                           );
                         },
                       );
                     },
+                    routes: [
+                      GoRoute(
+                        name: AppRoutes.search.name,
+                        path: AppRoutes.search.name,
+                        parentNavigatorKey: _rootNavigatorKey,
+                        pageBuilder: (context, state) {
+                          final withResult = state.extra as bool?;
+
+                          return NoTransitionPage(
+                            key: state.pageKey,
+                            child: SearchPage(withResult: withResult),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
-              // StatefulShellBranch(
-              //   routes: [
-              //     GoRoute(
-              //       path: AppRoutes.timeline.route,
-              //       pageBuilder: (context, state) {
-              //         return CustomTransitionPage(
-              //           key: state.pageKey,
-              //           // child: const TimelinePage(),
-              //           child: AppScaffold(body: Center(child: Text(' timeline Props '),)),
-              //           transitionsBuilder:
-              //               (context, animation, secondaryAnimation, child) {
-              //             return FadeTransition(
-              //               opacity: CurveTween(
-              //                 curve: Curves.easeInOut,
-              //               ).animate(animation),
-              //               child: child,
-              //             );
-              //           },
-              //         );
-              //       },
-              //       routes: [
-              //         GoRoute(
-              //           name: AppRoutes.search.name,
-              //           path: AppRoutes.search.name,
-              //           parentNavigatorKey: _rootNavigatorKey,
-              //           pageBuilder: (context, state) {
-              //             final withResult = state.extra as bool?;
-              //
-              //             return NoTransitionPage(
-              //               key: state.pageKey,
-              //               child: SearchPage(withResult: withResult),
-              //             );
-              //           },
-              //         ),
-              //       ],
-              //     ),
-              //   ],
-              // ),
+
               StatefulShellBranch(
                 routes: [
                   /// This route doesn't return anything and doesn't throws an
@@ -287,6 +261,7 @@ class AppRouter {
                   ),
                 ],
               ),
+
               StatefulShellBranch(
                 routes: [
                   GoRoute(

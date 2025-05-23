@@ -48,10 +48,10 @@ class TimelineView extends StatelessWidget {
               deltaBottom > (0.5 * vpHeight) - 220.0,
           slivers: [
             const SliverAppBar(
-              // title: SearchInputField(
-              //   active: true,
-              //   readOnly: true,
-              // ),
+              title: SearchInputField(
+                active: true,
+                readOnly: true,
+              ),
               floating: true,
               toolbarHeight: 64,
             ),

@@ -6,6 +6,7 @@ import 'package:flutter_snap_alanaam/bootstrap.dart';
 import 'package:flutter_snap_alanaam/firebase_options_prod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:posts_repository/posts_repository.dart';
+import 'package:search_repository/search_repository.dart';
 import 'package:shared/shared.dart';
 import 'package:supabase_authentication_client/supabase_authentication_client.dart';
 import 'package:token_storage/token_storage.dart';
@@ -23,6 +24,8 @@ void main() {
       clientId: IosClientId,
       serverClientId: WebClientId,
     );
+    final searchRepository= SearchRepository(databaseClient: powerSyncDatabaseClient);
+
     final postsRepository =
         PostsRepository(databaseClient: powerSyncDatabaseClient);
 
@@ -35,6 +38,7 @@ void main() {
         authenticationClient: supabaseAuthenticationClient,
         databaseClient: powerSyncDatabaseClient);
     return App(
+      searchRepository: searchRepository,
       postsRepository: postsRepository,
       user: await userRepository.user.first,
       firebaseRemoteConfigRepository: firebaseRemoteConfigRepository,

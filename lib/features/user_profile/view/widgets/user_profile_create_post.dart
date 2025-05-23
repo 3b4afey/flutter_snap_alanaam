@@ -42,7 +42,7 @@ class UserProfileCreatePost extends StatelessWidget {
     final pickerSource = PickerSource.video;
     return WillPopScope(
       onWillPop: () =>
-          onPopInvoked == null ? Future.value(true) : Future.value(false),
+      onPopInvoked == null ? Future.value(true) : Future.value(false),
       child: PickImage().customMediaPicker(
         key: imagePickerKey,
         context: context,
@@ -55,7 +55,7 @@ class UserProfileCreatePost extends StatelessWidget {
           extra: CreatePostProps(details: details, pickVideo: true),
         ),
         onBackButtonTap:
-            onBackButtonTap != null ? () => onBackButtonTap?.call() : null,
+        onBackButtonTap != null ? () => onBackButtonTap?.call() : null,
       ),
     );
   }
@@ -93,9 +93,9 @@ class _CreatePostPageState extends State<CreatePostPage> {
     _media = selectedFiles
         .map(
           (e) => e.isThatImage
-              ? MemoryImageMedia(bytes: e.selectedByte, id: uuid.v4())
-              : MemoryVideoMedia(id: uuid.v4(), file: e.selectedFile),
-        )
+          ? MemoryImageMedia(bytes: e.selectedByte, id: uuid.v4())
+          : MemoryVideoMedia(id: uuid.v4(), file: e.selectedFile),
+    )
         .toList();
   }
 

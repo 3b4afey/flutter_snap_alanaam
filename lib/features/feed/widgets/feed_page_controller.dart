@@ -59,7 +59,8 @@ class FeedPageController extends ChangeNotifier {
     required String postId,
     required String caption,
     required bool pickVideo,
-  }) async {
+  }) async
+  {
     final isReel =
         selectedFiles.length == 1 && selectedFiles.every((e) => !e.isThatImage);
     final navigateToReelPage = isReel;
