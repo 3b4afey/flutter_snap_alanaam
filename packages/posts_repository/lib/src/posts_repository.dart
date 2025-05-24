@@ -81,34 +81,34 @@ class PostsRepository implements PostsBaseRepository {
   Stream<int> commentsAmountOf({required String postId}) =>
       _databaseClient.commentsAmountOf(postId: postId);
 
-  //
-  // @override
-  // Stream<List<Comment>> commentsOf({required String postId}) =>
-  //     _databaseClient.commentsOf(postId: postId);
 
-  // @override
-  // Future<void> createComment({
-  //   required String content,
-  //   required String postId,
-  //   required String userId,
-  //   String? repliedToCommentId,
-  // }) =>
-  //     _databaseClient.createComment(
-  //       content: content,
-  //       postId: postId,
-  //       userId: userId,
-  //       repliedToCommentId: repliedToCommentId,
-  //     );
+  @override
+  Stream<List<Comment>> commentsOf({required String postId}) =>
+      _databaseClient.commentsOf(postId: postId);
+
+  @override
+  Future<void> createComment({
+    required String content,
+    required String postId,
+    required String userId,
+    String? repliedToCommentId,
+  }) =>
+      _databaseClient.createComment(
+        content: content,
+        postId: postId,
+        userId: userId,
+        repliedToCommentId: repliedToCommentId,
+      );
 
   @override
   Future<void> deleteComment({required String id}) =>
       _databaseClient.deleteComment(id: id);
 
-  //
-  // @override
-  // Stream<List<Comment>> repliedCommentsOf({required String commentId}) =>
-  //     _databaseClient.repliedCommentsOf(commentId: commentId);
-  //
+
+  @override
+  Stream<List<Comment>> repliedCommentsOf({required String commentId}) =>
+      _databaseClient.repliedCommentsOf(commentId: commentId);
+
   // @override
   // Future<void> sharePost({
   //   required String id,
@@ -349,27 +349,7 @@ class PostsRepository implements PostsBaseRepository {
     ),
   ].withNavigateToPostAuthorAction;
 
-  @override
-  Stream<List<Comment>> commentsOf({required String postId}) {
-    // TODO: implement commentsOf
-    throw UnimplementedError();
-  }
 
-  @override
-  Future<void> createComment(
-      {required String content,
-      required String postId,
-      required String userId,
-      String? repliedToCommentId}) {
-    // TODO: implement createComment
-    throw UnimplementedError();
-  }
-
-  @override
-  Stream<List<Comment>> repliedCommentsOf({required String commentId}) {
-    // TODO: implement repliedCommentsOf
-    throw UnimplementedError();
-  }
 
   @override
   Future<void> sharePost(

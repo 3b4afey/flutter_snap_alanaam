@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter_snap_alanaam/features/comments/comments.dart';
 import 'package:snap_blocks/snap_blocks.dart';
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/gestures.dart';
@@ -276,15 +277,15 @@ class VerticalButtons extends StatelessWidget {
         context.select((PostBloc bloc) => bloc.state.commentsCount);
     final isOwner = context.select((PostBloc bloc) => bloc.state.isOwner);
 
-    // Future<void> onCommentsTap(PostReelBlock block) =>
-    //     context.showScrollableModal(
-    //       pageBuilder: (scrollController, draggableScrollController) =>
-    //           CommentsPage(
-    //             post: block,
-    //             scrollController: scrollController,
-    //             draggableScrollController: draggableScrollController,
-    //           ),
-    //     );
+    Future<void> onCommentsTap(PostReelBlock block) =>
+        context.showScrollableModal(
+          pageBuilder: (scrollController, draggableScrollController) =>
+              CommentsPage(
+                post: block,
+                scrollController: scrollController,
+                draggableScrollController: draggableScrollController,
+              ),
+        );
 
     return Padding(
       padding: EdgeInsets.only(right: md, bottom: md),
@@ -302,8 +303,8 @@ class VerticalButtons extends StatelessWidget {
               statisticCount: likes,
             ),
             VerticalGroup(
-              // onButtonTap: () => onCommentsTap.call(block),
-              onButtonTap: () {},
+              onButtonTap: () => onCommentsTap.call(block),
+              // onButtonTap: () {},
               statisticCount: commentsCount,
               child: Assets.icons.chatCircle.svg(
                 height: AppSize.iconSize,
@@ -347,17 +348,17 @@ class VerticalButtons extends StatelessWidget {
                             ),
                             distractive: true,
                             onTap: () {
-                              // context
-                              //     .read<PostBloc>()
-                              //     .add(const PostDeleteRequested());
-                              // context.read<FeedBloc>().add(
-                              //   FeedUpdateRequested(
-                              //     update: FeedPageUpdate(
-                              //       newPost: block.toPost,
-                              //       type: PageUpdateType.delete,
-                              //     ),
-                              //   ),
-                              // );
+                              context
+                                  .read<PostBloc>()
+                                  .add(const PostDeleteRequested());
+                              context.read<FeedBloc>().add(
+                                FeedUpdateRequested(
+                                  update: FeedPageUpdate(
+                                    newPost: block.toPost,
+                                    type: PageUpdateType.delete,
+                                  ),
+                                ),
+                              );
                             },
                           ),
                         ],

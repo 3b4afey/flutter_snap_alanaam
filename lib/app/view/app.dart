@@ -1,4 +1,5 @@
 import 'package:app_ui/app_ui.dart';
+import 'package:chats_repository/chats_repository.dart';
 // import 'package:chats_repository/chats_repository.dart';
 import 'package:firebase_remote_config_repository/firebase_remote_config_repository.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,7 @@ class App extends StatelessWidget {
     required this.user,
     required this.userRepository,
     required this.postsRepository,
-    // required this.chatsRepository,
+    required this.chatsRepository,
     // required this.storiesRepository,
     required this.searchRepository,
     // required this.notificationsRepository,
@@ -38,7 +39,7 @@ class App extends StatelessWidget {
   final UserRepository userRepository;
   final PostsRepository postsRepository;
 
-  // final ChatsRepository chatsRepository;
+  final ChatsRepository chatsRepository;
   // final StoriesRepository storiesRepository;
   final SearchRepository searchRepository;
   // final NotificationsRepository notificationsRepository;
@@ -50,7 +51,7 @@ class App extends StatelessWidget {
       providers: [
         RepositoryProvider.value(value: userRepository),
         RepositoryProvider.value(value: postsRepository),
-        // RepositoryProvider.value(value: chatsRepository),
+        RepositoryProvider.value(value: chatsRepository),
         // RepositoryProvider.value(value: storiesRepository),
         RepositoryProvider.value(value: searchRepository),
         // RepositoryProvider.value(value: notificationsRepository),

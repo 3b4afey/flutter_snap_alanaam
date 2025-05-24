@@ -33,6 +33,7 @@ class ProfilePic extends StatelessWidget {
         // ),
         UserProfileAvatar(
           avatarUrl: user.avatarUrl,
+          radius: 46,
           onLongPress: (avatarUrl) =>
               avatarUrl == null ? null : context.showImagePreview(avatarUrl),
           onTap: (imageUrl) {

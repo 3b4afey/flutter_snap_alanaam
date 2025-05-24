@@ -2,6 +2,7 @@ import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_alanaam/app/app.dart';
+import 'package:flutter_snap_alanaam/features/comments/comments.dart';
 import 'package:snap_blocks/snap_blocks.dart';
 
 // import 'package:flutter_snap_alanaam/features/comments/comments.dart';
@@ -167,15 +168,15 @@ class PostLargeView extends StatelessWidget {
               },
             )
           : const PostOptionsSettings.viewer(),
-      // onCommentsTap: (showFullSized) => context.showScrollableModal(
-      //   showFullSized: showFullSized,
-      //   pageBuilder: (scrollController, draggableScrollController) =>
-      //       CommentsPage(
-      //     post: block,
-      //     scrollController: scrollController,
-      //     draggableScrollController: draggableScrollController,
-      //   ),
-      // ),
+      onCommentsTap: (showFullSized) => context.showScrollableModal(
+        showFullSized: showFullSized,
+        pageBuilder: (scrollController, draggableScrollController) =>
+            CommentsPage(
+          post: block,
+          scrollController: scrollController,
+          draggableScrollController: draggableScrollController,
+        ),
+      ),
       onUserTap: (userId) => _navigateToPostAuthor(context, id: userId),
       onPressed: (action) => _handleOnPostTap(context, action: action),
       onPostShareTap: (postId, author) => context.showScrollableModal(
@@ -193,7 +194,6 @@ class PostLargeView extends StatelessWidget {
                 aspectRatio: aspectRatio,
                 isInView: isInView,
               ),
-      onCommentsTap: (bool value) {},
     );
   }
 }

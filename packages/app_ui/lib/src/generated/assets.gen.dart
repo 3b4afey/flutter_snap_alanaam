@@ -30,6 +30,9 @@ class $AssetsIconsGen {
   SvgGenImage get chatCircle =>
       const SvgGenImage('assets/icons/chat_circle.svg');
 
+  /// File path: assets/icons/check.svg
+  SvgGenImage get check => const SvgGenImage('assets/icons/check.svg');
+
   /// File path: assets/icons/facebook.svg
   SvgGenImage get facebook => const SvgGenImage('assets/icons/facebook.svg');
 
@@ -54,15 +57,16 @@ class $AssetsIconsGen {
 
   /// List of all assets
   List<SvgGenImage> get values => [
-        chatCircle,
-        facebook,
-        google,
-        instagramReel,
-        search,
-        setting,
-        trash,
-        user,
-      ];
+    chatCircle,
+    check,
+    facebook,
+    google,
+    instagramReel,
+    search,
+    setting,
+    trash,
+    user,
+  ];
 }
 
 class $AssetsImagesGen {
@@ -127,13 +131,13 @@ class $AssetsImagesBgGen {
 
   /// List of all assets
   List<dynamic> get values => [
-        clearSideBgNightMode,
-        finalSvg,
-        sideBgNightMode,
-        trySvg,
-        verticalBgNightModeJpg,
-        verticalBgNightModeSvg,
-      ];
+    clearSideBgNightMode,
+    finalSvg,
+    sideBgNightMode,
+    trySvg,
+    verticalBgNightModeJpg,
+    verticalBgNightModeSvg,
+  ];
 }
 
 class $AssetsImagesLogoGen {
@@ -154,6 +158,21 @@ class $AssetsImagesPhotosGen {
   AssetGenImage get camelCategory =>
       const AssetGenImage('assets/images/photos/camel_category.png');
 
+  /// File path: assets/images/photos/chat-background_light_mask.png
+  AssetGenImage get chatBackgroundLightMask => const AssetGenImage(
+    'assets/images/photos/chat-background_light_mask.png',
+  );
+
+  /// File path: assets/images/photos/chat_background_dark_mask.jpeg
+  AssetGenImage get chatBackgroundDarkMask => const AssetGenImage(
+    'assets/images/photos/chat_background_dark_mask.jpeg',
+  );
+
+  /// File path: assets/images/photos/chat_background_light_overlay.png
+  AssetGenImage get chatBackgroundLightOverlay => const AssetGenImage(
+    'assets/images/photos/chat_background_light_overlay.png',
+  );
+
   /// File path: assets/images/photos/placeholder.png
   AssetGenImage get placeholder =>
       const AssetGenImage('assets/images/photos/placeholder.png');
@@ -163,7 +182,14 @@ class $AssetsImagesPhotosGen {
       const AssetGenImage('assets/images/photos/profile_photo.png');
 
   /// List of all assets
-  List<AssetGenImage> get values => [camelCategory, placeholder, profilePhoto];
+  List<AssetGenImage> get values => [
+    camelCategory,
+    chatBackgroundLightMask,
+    chatBackgroundDarkMask,
+    chatBackgroundLightOverlay,
+    placeholder,
+    profilePhoto,
+  ];
 }
 
 class Assets {
@@ -256,10 +282,10 @@ class AssetGenImage {
 
 class SvgGenImage {
   const SvgGenImage(this._assetName, {this.size, this.flavors = const {}})
-      : _isVecFormat = false;
+    : _isVecFormat = false;
 
   const SvgGenImage.vec(this._assetName, {this.size, this.flavors = const {}})
-      : _isVecFormat = true;
+    : _isVecFormat = true;
 
   final String _assetName;
   final Size? size;
@@ -316,7 +342,8 @@ class SvgGenImage {
       placeholderBuilder: placeholderBuilder,
       semanticsLabel: semanticsLabel,
       excludeFromSemantics: excludeFromSemantics,
-      colorFilter: colorFilter ??
+      colorFilter:
+          colorFilter ??
           (color == null ? null : ColorFilter.mode(color, colorBlendMode)),
       clipBehavior: clipBehavior,
       cacheColorFilter: cacheColorFilter,

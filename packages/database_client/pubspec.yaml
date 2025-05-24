@@ -20,6 +20,8 @@ dependencies:
     path: ../shared
   user_repository:
     path: ../user_repository
+  snap_blocks:
+    path: ../snap_blocks
 
 dev_dependencies:
   flutter_test:

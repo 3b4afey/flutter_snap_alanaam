@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:snap_blocks/snap_blocks.dart';
+
 import 'package:dio/dio.dart';
 import 'package:env/env.dart';
 import 'package:flutter/foundation.dart';
@@ -168,33 +170,33 @@ abstract class PostsBaseRepository {
   Future<void> deleteComment({required String id});
 
   /// Shares the post with the user identified by [receiver].
-  // Future<void> sharePost({
-  //   required String id,
-  //   required User sender,
-  //   required User receiver,
-  //   required Message sharedPostMessage,
-  //   Message? message,
-  //   PostAuthor? postAuthor,
-  // });
+// Future<void> sharePost({
+//   required String id,
+//   required User sender,
+//   required User receiver,
+//   required Message sharedPostMessage,
+//   Message? message,
+//   PostAuthor? postAuthor,
+// });
 }
 
 /// Abstract base class for a chats repository.
 abstract class ChatsBaseRepository {
   /// Returns a stream of real-time chats of the user identified by [userId].
-  // Stream<List<ChatInbox>> chatsOf({required String userId});
+  Stream<List<ChatInbox>> chatsOf({required String userId});
 
   /// Returns a stream of real-time messages of the chat identified by [chatId].
   Stream<List<Message>> messagesOf({required String chatId});
 
   /// Creates and send message with provided data. After sending the message
   /// the notification is sent to the user, identified by [receiver]'s `id`.
-  // Future<void> sendMessage({
-  //   required String chatId,
-  //   required User sender,
-  //   required User receiver,
-  //   required Message message,
-  //   PostAuthor? postAuthor,
-  // });
+  Future<void> sendMessage({
+    required String chatId,
+    required User sender,
+    required User receiver,
+    required Message message,
+    PostAuthor? postAuthor,
+  });
 
   /// Deletes the message with provided [messageId].
   Future<void> deleteMessage({required String messageId});
@@ -272,8 +274,7 @@ abstract class DatabaseClient
     implements
         UserBaseRepository,
         PostsBaseRepository,
-        ChatsBaseRepository
-        // StoriesBaseRepository 
+        ChatsBaseRepository // StoriesBaseRepository
 {
   /// {@macro database_client}
   const DatabaseClient();
@@ -298,11 +299,11 @@ class PowerSyncDatabaseClient extends DatabaseClient {
 
   @override
   Stream<User> profile({required String id}) => _powerSyncRepository.db().watch(
-    'SELECT * FROM profiles WHERE id = ?',
-    parameters: [id],
-  ).map(
+        'SELECT * FROM profiles WHERE id = ?',
+        parameters: [id],
+      ).map(
         (event) => event.isEmpty ? User.anonymous : User.fromJson(event.first),
-  );
+      );
 
   @override
   Future<Post?> createPost({
@@ -347,8 +348,8 @@ SELECT * FROM profiles WHERE id = ?
     ''',
         parameters: [userId],
       ).map(
-            (event) =>
-        event.safeMap((element) => element['posts_count']).first as int,
+        (event) =>
+            event.safeMap((element) => element['posts_count']).first as int,
       );
 
   @override
@@ -371,7 +372,7 @@ ORDER BY created_at DESC
       ''',
         parameters: [currentUserId],
       ).map(
-            (event) => event
+        (event) => event
             .safeMap((row) => Post.fromJson(Map<String, dynamic>.from(row)))
             .toList(growable: false),
       );
@@ -391,7 +392,7 @@ ORDER BY created_at DESC
       ''',
       parameters: [userId],
     ).map(
-          (event) => event
+      (event) => event
           .safeMap((row) => Post.fromJson(Map<String, dynamic>.from(row)))
           .toList(growable: false),
     );
@@ -440,7 +441,7 @@ ORDER BY created_at DESC
 //       return posts;
 //     }
     final result = await _powerSyncRepository.db().computeWithDatabase(
-          (db) async {
+      (db) async {
         final result = db.select(
           '''
 SELECT
@@ -469,8 +470,8 @@ ORDER BY created_at DESC LIMIT ?1 OFFSET ?2
           final listMedia = jsonListMedia
               .map(
                 (jsonMedia) => (jsonDecode(jsonMedia) as List<dynamic>)
-                .cast<Map<String, dynamic>>(),
-          )
+                    .cast<Map<String, dynamic>>(),
+              )
               .toList();
 
           return sendPort.send(listMedia);
@@ -482,7 +483,7 @@ ORDER BY created_at DESC LIMIT ?1 OFFSET ?2
         );
         isolate.kill(priority: Isolate.immediate);
         final media =
-        await receivePort.first as List<List<Map<String, dynamic>>>;
+            await receivePort.first as List<List<Map<String, dynamic>>>;
 
         final posts = <Post>[];
         for (var i = 0; i < result.length; i++) {
@@ -607,7 +608,7 @@ WHERE posts.id = ?
     final statement = post ? 'post_id' : 'comment_id';
     final exists = await _powerSyncRepository.db().execute(
       'SELECT 1 FROM likes '
-          'WHERE user_id = ? AND $statement = ? AND $statement IS NOT NULL',
+      'WHERE user_id = ? AND $statement = ? AND $statement IS NOT NULL',
       [currentUserId, id],
     );
     if (exists.isEmpty) {
@@ -633,10 +634,10 @@ WHERE posts.id = ?
   Stream<int> followersCountOf({required String userId}) =>
       _powerSyncRepository.db().watch(
         'SELECT COUNT(*) AS subscription_count FROM subscriptions '
-            'WHERE subscribed_to_id = ?',
+        'WHERE subscribed_to_id = ?',
         parameters: [userId],
       ).map(
-            (event) => event
+        (event) => event
             .safeMap((element) => element['subscription_count'])
             .first as int,
       );
@@ -697,10 +698,10 @@ WHERE posts.id = ?
   Stream<int> followingsCountOf({required String userId}) =>
       _powerSyncRepository.db().watch(
         'SELECT COUNT(*) AS subscription_count FROM subscriptions '
-            'WHERE subscriber_id = ?',
+        'WHERE subscriber_id = ?',
         parameters: [userId],
       ).map(
-            (event) => event
+        (event) => event
             .safeMap((element) => element['subscription_count'])
             .first as int,
       );
@@ -737,10 +738,10 @@ WHERE posts.id = ?
       final followersFutures = await Future.wait(
         result.where((row) => row.isNotEmpty).safeMap(
               (row) => _powerSyncRepository.db().getOptional(
-            'SELECT * FROM profiles WHERE id = ?',
-            [row['subscriber_id']],
-          ),
-        ),
+                'SELECT * FROM profiles WHERE id = ?',
+                [row['subscriber_id']],
+              ),
+            ),
       );
       for (final user in followersFutures) {
         if (user == null) continue;
@@ -811,7 +812,7 @@ WHERE post_id = ?
 ''',
         parameters: [postId],
       ).map(
-            (result) => result.map((row) => row['comments_count']).first as int,
+        (result) => result.map((row) => row['comments_count']).first as int,
       );
 
   @override
@@ -838,7 +839,7 @@ ORDER BY created_at ASC
 ''',
         parameters: [postId],
       ).map(
-            (result) => result.safeMap(Comment.fromRow).toList(growable: false),
+        (result) => result.safeMap(Comment.fromRow).toList(growable: false),
       );
 
   @override
@@ -881,7 +882,7 @@ WHERE id = ?
 //     required Message sharedPostMessage,
 //     Message? message,
 //     PostAuthor? postAuthor,
-//   }) async 
+//   }) async
 //   {
 //     final exists = await _powerSyncRepository.db().execute(
 //       '''
@@ -993,7 +994,7 @@ ORDER BY created_at ASC
 ''',
         parameters: [commentId],
       ).map(
-            (result) => result.safeMap(Comment.fromRow).toList(growable: false),
+        (result) => result.safeMap(Comment.fromRow).toList(growable: false),
       );
 
   @override
@@ -1016,34 +1017,34 @@ ORDER BY created_at ASC
         },
       );
 
-//   @override
-//   Stream<List<ChatInbox>> chatsOf({required String userId}) =>
-//       _powerSyncRepository.db().watch(
-//         '''
-// select
-//   c.id,
-//   c.type,
-//   c.name,
-//   p2.id as participant_id,
-//   p2.full_name as participant_name,
-//   p2.email as participant_email,
-//   p2.username as participant_username,
-//   p2.avatar_url as participant_avatar_url,
-//   p2.push_token as participant_push_token
-// from
-//   conversations c
-//   join participants pt on c.id = pt.conversation_id
-//   join profiles p on pt.user_id = p.id
-//   join participants pt2 on c.id = pt2.conversation_id
-//   join profiles p2 on pt2.user_id = p2.id
-// where
-//   pt.user_id = ?1
-//   and pt2.user_id != ?1
-// ''',
-//         parameters: [userId],
-//       ).map(
-//             (event) => event.safeMap(ChatInbox.fromRow).toList(growable: false),
-//       );
+  @override
+  Stream<List<ChatInbox>> chatsOf({required String userId}) =>
+      _powerSyncRepository.db().watch(
+        '''
+select
+  c.id,
+  c.type,
+  c.name,
+  p2.id as participant_id,
+  p2.full_name as participant_name,
+  p2.email as participant_email,
+  p2.username as participant_username,
+  p2.avatar_url as participant_avatar_url,
+  p2.push_token as participant_push_token
+from
+  conversations c
+  join participants pt on c.id = pt.conversation_id
+  join profiles p on pt.user_id = p.id
+  join participants pt2 on c.id = pt2.conversation_id
+  join profiles p2 on pt2.user_id = p2.id
+where
+  pt.user_id = ?1
+  and pt2.user_id != ?1
+''',
+        parameters: [userId],
+      ).map(
+        (event) => event.safeMap(ChatInbox.fromRow).toList(growable: false),
+      );
 
   @override
   Stream<List<Message>> messagesOf({required String chatId}) =>
@@ -1086,96 +1087,95 @@ order by created_at asc
 ''',
         parameters: [chatId],
       ).map((event) => event.safeMap(Message.fromRow).toList(growable: false));
-//
-//   @override
-//   Future<void> createChat({
-//     required String userId,
-//     required String participantId,
-//   }) async {
-//     final alreadyExists = await _powerSyncRepository.db().getOptional(
-//       '''
-//       SELECT 1
-//       FROM conversations c
-//       JOIN participants p1 ON c.id = p1.conversation_id
-//       JOIN participants p2 ON c.id = p2.conversation_id
-//       WHERE p1.user_id = ? AND p2.user_id = ?
-//   ''',
-//       [userId, participantId],
-//     );
-//     if (alreadyExists != null) return;
-//     final conversationId = uuid.v4();
-//     final createdConversation = _powerSyncRepository.db().execute(
-//       '''
-// insert into
-//   conversations (id, type, name, created_at, updated_at)
-// values
-//   (?, ?, '', ?, ?)
-// ''',
-//       [conversationId, ChatType.oneOnOne.value, JiffyX.now(), JiffyX.now()],
-//     );
-//     final addParticipant1 = _powerSyncRepository.db().execute(
-//       '''
-// insert into
-//   participants (id, user_id, conversation_id)
-//   values
-//   (?, ?, ?)
-//   ''',
-//       [uuid.v4(), userId, conversationId],
-//     );
-//     final addParticipant2 = _powerSyncRepository.db().execute(
-//       '''
-// insert into
-//   participants (id, user_id, conversation_id)
-//   values
-//   (?, ?, ?)
-//   ''',
-//       [uuid.v4(), participantId, conversationId],
-//     );
-//     await createdConversation
-//         .whenComplete(() => Future.wait([addParticipant1, addParticipant2]));
-//   }
+
+  @override
+  Future<void> createChat({
+    required String userId,
+    required String participantId,
+  }) async {
+    final alreadyExists = await _powerSyncRepository.db().getOptional(
+      '''
+      SELECT 1
+      FROM conversations c
+      JOIN participants p1 ON c.id = p1.conversation_id
+      JOIN participants p2 ON c.id = p2.conversation_id
+      WHERE p1.user_id = ? AND p2.user_id = ?
+  ''',
+      [userId, participantId],
+    );
+    if (alreadyExists != null) return;
+    final conversationId = uuid.v4();
+    final createdConversation = _powerSyncRepository.db().execute(
+      '''
+insert into
+  conversations (id, type, name, created_at, updated_at)
+values
+  (?, ?, '', ?, ?)
+''',
+      [conversationId, ChatType.oneOnOne.value, JiffyX.now(), JiffyX.now()],
+    );
+    final addParticipant1 = _powerSyncRepository.db().execute(
+      '''
+insert into
+  participants (id, user_id, conversation_id)
+  values
+  (?, ?, ?)
+  ''',
+      [uuid.v4(), userId, conversationId],
+    );
+    final addParticipant2 = _powerSyncRepository.db().execute(
+      '''
+insert into
+  participants (id, user_id, conversation_id)
+  values
+  (?, ?, ?)
+  ''',
+      [uuid.v4(), participantId, conversationId],
+    );
+    await createdConversation
+        .whenComplete(() => Future.wait([addParticipant1, addParticipant2]));
+  }
 
   @override
   Future<void> deleteChat({
     required String chatId,
     required String userId,
   }) async {
-//     final participants = (await _powerSyncRepository.db().get(
-//       '''
-// select
-//   count(*) as participants_count
-// from
-//   participants
-// where conversation_id = ?
-// ''',
-//       [chatId],
-//     ))['participants_count'] as int;
-//     if (participants >= 1) {
-//       final isParticipantInConversation = await _powerSyncRepository.db()
-// .get(
-//         '''
-// select
-//   *
-// from
-//   participants
-// where
-//   user_id = ?
-//   and conversation_id = ?
-//   ''',
-//         [userId, chatId],
-//       );
-//       if (isParticipantInConversation.isEmpty) return;
-//       await _powerSyncRepository.db().execute(
-//         '''
-// delete from participants
-// where
-//   user_id = ?
-//   and conversation_id = ?
-// ''',
-//         [userId, chatId],
-//       );
-//       return;
-//     }
+    final participants = (await _powerSyncRepository.db().get(
+      '''
+select
+  count(*) as participants_count
+from
+  participants
+where conversation_id = ?
+''',
+      [chatId],
+    ))['participants_count'] as int;
+    if (participants >= 1) {
+      final isParticipantInConversation = await _powerSyncRepository.db().get(
+        '''
+select
+  *
+from
+  participants
+where
+  user_id = ?
+  and conversation_id = ?
+  ''',
+        [userId, chatId],
+      );
+      if (isParticipantInConversation.isEmpty) return;
+      await _powerSyncRepository.db().execute(
+        '''
+delete from participants
+where
+  user_id = ?
+  and conversation_id = ?
+''',
+        [userId, chatId],
+      );
+      return;
+    }
     await _powerSyncRepository.db().execute(
       '''
 delete from conversations
@@ -1212,102 +1212,103 @@ WHERE
       [messageId],
     );
   }
-//
-//   @override
-//   Future<void> sendMessage({
-//     required String chatId,
-//     required User sender,
-//     required User receiver,
-//     required Message message,
-//     PostAuthor? postAuthor,
-//   }) =>
-//       _powerSyncRepository.db().writeTransaction((sqlContext) async {
-//         await sqlContext.execute(
-//           '''
-// insert into
-//   messages (
-//     id, conversation_id, from_id, type, message, reply_message_id, created_at, 
-//     updated_at, is_read, is_deleted, is_edited, reply_message_username,
-//     reply_message_attachment_url, shared_post_id
-//     )
-// values
-//   (?, ?, ?, ?, ?, ?, ?, ?, 0, 0, 0, ?, ?, ?)
-// ''',
-//           [
-//             message.id,
-//             chatId,
-//             sender.id,
-//             message.type.value,
-//             message.message,
-//             message.replyMessageId,
-//             DateTime.now().toIso8601String(),
-//             DateTime.now().toIso8601String(),
-//             message.replyMessageUsername,
-//             message.replyMessageAttachmentUrl,
-//             message.sharedPostId,
-//           ],
-//         );
-//
-//         await sqlContext.executeBatch(
-//           '''
-// insert into
-//   attachments (
-//     id, message_id, title, text, title_link, image_url,
-//     thumb_url, author_name, author_link, asset_url, og_scrape_url, type
-//   )
-// values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-// ''',
-//           message.attachments
-//               .map(
-//                 (a) => [
-//               a.id,
-//               message.id,
-//               a.title,
-//               a.text,
-//               a.titleLink,
-//               a.imageUrl,
-//               a.thumbUrl,
-//               a.authorName,
-//               a.authorLink,
-//               a.assetUrl,
-//               a.ogScrapeUrl,
-//               a.type,
-//             ],
-//           )
-//               .toList(),
-//         );
-//
-//         try {
-//           final receivePort = ReceivePort();
-//
-//           await Isolate.spawn(sendBackgroundNotification, [
-//             receivePort.sendPort,
-//             receiver,
-//             sender,
-//             message,
-//             postAuthor,
-//             chatId,
-//           ]);
-//         } catch (error, stackTrace) {
-//           logE(
-//             'Error send notification.',
-//             error: error,
-//             stackTrace: stackTrace,
-//           );
-//         }
-//       });
-//
-//   /// Sends notification in a background isolate.
-//   Future<void> sendBackgroundNotification(List<dynamic> args) async {
-//     await sendNotification(
-//       reciever: args[1] as User,
-//       sender: args[2] as User,
-//       message: args[3] as Message,
-//       postAuthor: args[4] as PostAuthor?,
-//       chatId: args[5] as String,
-//     );
-//     Isolate.exit(args[0] as SendPort, args);
-//   }
+
+
+  @override
+  Future<void> sendMessage({
+    required String chatId,
+    required User sender,
+    required User receiver,
+    required Message message,
+    PostAuthor? postAuthor,
+  }) =>
+      _powerSyncRepository.db().writeTransaction((sqlContext) async {
+        await sqlContext.execute(
+          '''
+insert into
+  messages (
+    id, conversation_id, from_id, type, message, reply_message_id, created_at,
+    updated_at, is_read, is_deleted, is_edited, reply_message_username,
+    reply_message_attachment_url, shared_post_id
+    )
+values
+  (?, ?, ?, ?, ?, ?, ?, ?, 0, 0, 0, ?, ?, ?)
+''',
+          [
+            message.id,
+            chatId,
+            sender.id,
+            message.type.value,
+            message.message,
+            message.replyMessageId,
+            DateTime.now().toIso8601String(),
+            DateTime.now().toIso8601String(),
+            message.replyMessageUsername,
+            message.replyMessageAttachmentUrl,
+            message.sharedPostId,
+          ],
+        );
+
+        await sqlContext.executeBatch(
+          '''
+insert into
+  attachments (
+    id, message_id, title, text, title_link, image_url,
+    thumb_url, author_name, author_link, asset_url, og_scrape_url, type
+  )
+values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+''',
+          message.attachments
+              .map(
+                (a) => [
+              a.id,
+              message.id,
+              a.title,
+              a.text,
+              a.titleLink,
+              a.imageUrl,
+              a.thumbUrl,
+              a.authorName,
+              a.authorLink,
+              a.assetUrl,
+              a.ogScrapeUrl,
+              a.type,
+            ],
+          )
+              .toList(),
+        );
+
+        try {
+          final receivePort = ReceivePort();
+
+          // await Isolate.spawn(sendBackgroundNotification, [
+          //   receivePort.sendPort,
+          //   receiver,
+          //   sender,
+          //   message,
+          //   postAuthor,
+          //   chatId,
+          // ]);
+        } catch (error, stackTrace) {
+          logE(
+            'Error send notification.',
+            error: error,
+            stackTrace: stackTrace,
+          );
+        }
+      });
+
+  /// Sends notification in a background isolate.
+  // Future<void> sendBackgroundNotification(List<dynamic> args) async {
+  //   await sendNotification(
+  //     reciever: args[1] as User,
+  //     sender: args[2] as User,
+  //     message: args[3] as Message,
+  //     postAuthor: args[4] as PostAuthor?,
+  //     chatId: args[5] as String,
+  //   );
+  //   Isolate.exit(args[0] as SendPort, args);
+  // }
 //
 //   /// Sends notification using Google APIs to user.
 //   Future<void> sendNotification({
@@ -1350,114 +1351,114 @@ WHERE
 //     );
 //     logD('Response: $res, \n status code: ${res.statusCode}');
 //   }
-//
-//   @override
-//   Future<void> editMessage({
-//     required Message oldMessage,
-//     required Message newMessage,
-//   }) async {
-//     late final newMessageHasAttachments = newMessage.attachments.isNotEmpty;
-//     late final oldMessageHasAttachments = oldMessage.attachments.isNotEmpty;
-//     late final updateOldMessageAttachments =
-//         newMessageHasAttachments && oldMessageHasAttachments;
-//     late final insertNewMessageAttachments =
-//         newMessageHasAttachments && !oldMessageHasAttachments;
-//
-//     await _powerSyncRepository.db().execute(
-//       '''
-// update messages
-// set
-//   message = ?1,
-//   updated_at = ?2
-// where
-//   id = ?3
-// ''',
-//       [
-//         newMessage.message,
-//         DateTime.timestamp().toIso8601String(),
-//         newMessage.id,
-//       ],
-//     );
-//     if (!newMessageHasAttachments && oldMessageHasAttachments) {
-//       await _powerSyncRepository.db().execute(
-//         '''
-// delete from attachments
-// where message_id = ?
-//         ''',
-//         [newMessage.id],
-//       );
-//       return;
-//     }
-//     if (updateOldMessageAttachments) {
-//       final oldAttachmentId = oldMessage.attachments.first.id;
-//       await _powerSyncRepository.db().executeBatch(
-//         '''
-// update attachments
-// set
-//   title = ?,
-//   text = ?,
-//   title_link = ?,
-//   image_url = ?,
-//   thumb_url = ?,
-//   author_name = ?,
-//   author_link = ?,
-//   asset_url = ?,
-//   og_scrape_url = ?
-// where
-//   id = ?
-//   and message_id = ?
-// ''',
-//         newMessage.attachments
-//             .map(
-//               (a) => [
-//             a.title,
-//             a.text,
-//             a.titleLink,
-//             a.imageUrl,
-//             a.thumbUrl,
-//             a.authorName,
-//             a.authorLink,
-//             a.assetUrl,
-//             a.ogScrapeUrl,
-//             oldAttachmentId,
-//             oldMessage.id,
-//           ],
-//         )
-//             .toList(),
-//       );
-//       return;
-//     }
-//     if (insertNewMessageAttachments) {
-//       await _powerSyncRepository.db().executeBatch(
-//         '''
-// insert into
-//   attachments (
-//     id, message_id, title, text, title_link, image_url,
-//     thumb_url, author_name, author_link, asset_url, og_scrape_url, type
-//   )
-// values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-// ''',
-//         newMessage.attachments
-//             .map(
-//               (a) => [
-//             a.id,
-//             newMessage.id,
-//             a.title,
-//             a.text,
-//             a.titleLink,
-//             a.imageUrl,
-//             a.thumbUrl,
-//             a.authorName,
-//             a.authorLink,
-//             a.assetUrl,
-//             a.ogScrapeUrl,
-//             a.type,
-//           ],
-//         )
-//             .toList(),
-//       );
-//     }
-//   }
+
+  @override
+  Future<void> editMessage({
+    required Message oldMessage,
+    required Message newMessage,
+  }) async {
+    late final newMessageHasAttachments = newMessage.attachments.isNotEmpty;
+    late final oldMessageHasAttachments = oldMessage.attachments.isNotEmpty;
+    late final updateOldMessageAttachments =
+        newMessageHasAttachments && oldMessageHasAttachments;
+    late final insertNewMessageAttachments =
+        newMessageHasAttachments && !oldMessageHasAttachments;
+
+    await _powerSyncRepository.db().execute(
+      '''
+update messages
+set
+  message = ?1,
+  updated_at = ?2
+where
+  id = ?3
+''',
+      [
+        newMessage.message,
+        DateTime.timestamp().toIso8601String(),
+        newMessage.id,
+      ],
+    );
+    if (!newMessageHasAttachments && oldMessageHasAttachments) {
+      await _powerSyncRepository.db().execute(
+        '''
+delete from attachments
+where message_id = ?
+        ''',
+        [newMessage.id],
+      );
+      return;
+    }
+    if (updateOldMessageAttachments) {
+      final oldAttachmentId = oldMessage.attachments.first.id;
+      await _powerSyncRepository.db().executeBatch(
+        '''
+update attachments
+set
+  title = ?,
+  text = ?,
+  title_link = ?,
+  image_url = ?,
+  thumb_url = ?,
+  author_name = ?,
+  author_link = ?,
+  asset_url = ?,
+  og_scrape_url = ?
+where
+  id = ?
+  and message_id = ?
+''',
+        newMessage.attachments
+            .map(
+              (a) => [
+                a.title,
+                a.text,
+                a.titleLink,
+                a.imageUrl,
+                a.thumbUrl,
+                a.authorName,
+                a.authorLink,
+                a.assetUrl,
+                a.ogScrapeUrl,
+                oldAttachmentId,
+                oldMessage.id,
+              ],
+            )
+            .toList(),
+      );
+      return;
+    }
+    if (insertNewMessageAttachments) {
+      await _powerSyncRepository.db().executeBatch(
+        '''
+insert into
+  attachments (
+    id, message_id, title, text, title_link, image_url,
+    thumb_url, author_name, author_link, asset_url, og_scrape_url, type
+  )
+values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+''',
+        newMessage.attachments
+            .map(
+              (a) => [
+                a.id,
+                newMessage.id,
+                a.title,
+                a.text,
+                a.titleLink,
+                a.imageUrl,
+                a.thumbUrl,
+                a.authorName,
+                a.authorLink,
+                a.assetUrl,
+                a.ogScrapeUrl,
+                a.type,
+              ],
+            )
+            .toList(),
+      );
+    }
+  }
 
   @override
   Future<List<User>> searchUsers({
@@ -1470,7 +1471,7 @@ WHERE
     if (query == null || query.trim().isEmpty) return <User>[];
     query = query.removeSpecialCharacters();
     final excludeUserIdsStatement =
-    excludeUserIds == null ? '' : 'AND id NOT IN ($excludeUserIds)';
+        excludeUserIds == null ? '' : 'AND id NOT IN ($excludeUserIds)';
 
     final result = await _powerSyncRepository.db().getAll(
       '''
@@ -1485,6 +1486,7 @@ LIMIT ?2 OFFSET ?3
 
     return result.safeMap(User.fromJson).toList(growable: false);
   }
+
 //
 //   @override
 //   Future<void> createStory({
@@ -1526,7 +1528,7 @@ LIMIT ?2 OFFSET ?3
 //   }) =>
 //       _powerSyncRepository.db().watch(
 //         '''
-// SELECT 
+// SELECT
 //   s.*${includeAuthor ? ', p.id as user_id, p.username, p.full_name, p.avatar_url' : ''}
 // FROM stories s
 //   ${includeAuthor ? 'LEFT JOIN profiles p ON s.user_id = p.id' : ''}
@@ -1604,17 +1606,5 @@ LIMIT ?3 OFFSET ?4
     );
     if (result.isEmpty) return [];
     return result.safeMap(User.fromJson).toList(growable: false);
-  }
-
-  @override
-  Future<void> createChat({required String userId, required String participantId}) {
-    // TODO: implement createChat
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> editMessage({required Message oldMessage, required Message newMessage}) {
-    // TODO: implement editMessage
-    throw UnimplementedError();
   }
 }

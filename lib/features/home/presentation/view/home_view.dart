@@ -1,5 +1,6 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_snap_alanaam/features/chats/chats.dart';
 import 'package:flutter_snap_alanaam/features/feed/post/video/widgets/video_player_inherited_widget.dart';
 import 'package:flutter_snap_alanaam/features/home/presentation/home.dart';
 import 'package:flutter_snap_alanaam/features/user_profile/view/widgets/user_profile_create_post.dart';
@@ -119,11 +120,7 @@ class _HomeViewState extends State<HomeView> {
                     onPopInvoked: () => HomeProvider().animateToPage(1),
                     onBackButtonTap: () => HomeProvider().animateToPage(1),
                   ),
-                2 => AppScaffold(
-                    body: Center(
-                      child: Text('Chat Page'),
-                    ),
-                  ),
+                2 => const ChatsPage(),
                 _ => AppScaffold(
                     body: widget.navigationShell,
                     floatingActionButtonLocation:

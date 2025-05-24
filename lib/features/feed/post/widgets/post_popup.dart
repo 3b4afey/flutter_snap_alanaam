@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_alanaam/app/app.dart';
+import 'package:flutter_snap_alanaam/features/comments/comments.dart';
 // import 'package:flutter_snap_alanaam/features/comments/view/comments_page.dart';
 import 'package:flutter_snap_alanaam/features/feed/post/post.dart';
 import 'package:flutter_snap_alanaam/l10n/l10n.dart';
@@ -299,15 +300,15 @@ class _PostPopupState extends State<PopupModal>
 
   Future<void> showCommentsOrViewProfile() async {
     if (widget.showComments) {
-      // await context.showScrollableModal(
-      //   showFullSized: true,
-      //   pageBuilder: (scrollController, draggableScrollController) =>
-      //       CommentsPage(
-      //     post: widget.block,
-      //     scrollController: scrollController,
-      //     draggableScrollController: draggableScrollController,
-      //   ),
-      // );
+      await context.showScrollableModal(
+        showFullSized: true,
+        pageBuilder: (scrollController, draggableScrollController) =>
+            CommentsPage(
+          post: widget.block,
+          scrollController: scrollController,
+          draggableScrollController: draggableScrollController,
+        ),
+      );
     } else {
       await context.pushNamed(
         AppRoutes.userProfile.name,

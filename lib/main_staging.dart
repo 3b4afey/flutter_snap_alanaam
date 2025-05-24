@@ -1,3 +1,4 @@
+import 'package:chats_repository/chats_repository.dart';
 import 'package:database_client/database_client.dart';
 import 'package:env/env.dart';
 import 'package:flutter_snap_alanaam/app/di/di.dart';
@@ -36,8 +37,10 @@ void main() {
         databaseClient: powerSyncDatabaseClient);
     final postsRepository =
         PostsRepository(databaseClient: powerSyncDatabaseClient);
+    final chatsRepository = ChatsRepository(databaseClient: powerSyncDatabaseClient);
 
     return App(
+      chatsRepository: chatsRepository,
       searchRepository: searchRepository,
       postsRepository: postsRepository,
       user: await userRepository.user.first,

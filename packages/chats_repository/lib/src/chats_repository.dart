@@ -1,7 +1,7 @@
 import 'package:database_client/database_client.dart';
 import 'package:shared/shared.dart';
 import 'package:user_repository/user_repository.dart';
-
+import 'package:snap_blocks/snap_blocks.dart';
 /// {@template chats_repository}
 /// A repository that manages the chats data data flow.
 /// {@endtemplate}
@@ -12,9 +12,9 @@ class ChatsRepository implements ChatsBaseRepository {
 
   final DatabaseClient _databaseClient;
 
-  // @override
-  // Stream<List<ChatInbox>> chatsOf({required String userId}) =>
-  //     _databaseClient.chatsOf(userId: userId);
+  @override
+  Stream<List<ChatInbox>> chatsOf({required String userId}) =>
+      _databaseClient.chatsOf(userId: userId);
 
   @override
   Stream<List<Message>> messagesOf({required String chatId}) =>
@@ -41,21 +41,21 @@ class ChatsRepository implements ChatsBaseRepository {
   }) =>
       _databaseClient.readMessage(messageId: messageId);
 
-  // @override
-  // Future<void> sendMessage({
-  //   required String chatId,
-  //   required User sender,
-  //   required User receiver,
-  //   required Message message,
-  //   PostAuthor? postAuthor,
-  // }) =>
-  //     _databaseClient.sendMessage(
-  //       chatId: chatId,
-  //       sender: sender,
-  //       receiver: receiver,
-  //       message: message,
-  //       postAuthor: postAuthor,
-  //     );
+  @override
+  Future<void> sendMessage({
+    required String chatId,
+    required User sender,
+    required User receiver,
+    required Message message,
+    PostAuthor? postAuthor,
+  }) =>
+      _databaseClient.sendMessage(
+        chatId: chatId,
+        sender: sender,
+        receiver: receiver,
+        message: message,
+        postAuthor: postAuthor,
+      );
 
   @override
   Future<void> editMessage({
@@ -67,20 +67,7 @@ class ChatsRepository implements ChatsBaseRepository {
         newMessage: newMessage,
       );
 
-  @override
-  Stream<List<dynamic>> chatsOf({required String userId}) {
-    // TODO: implement chatsOf
-    throw UnimplementedError();
-  }
 
-  @override
-  Future<void> sendMessage(
-      {required String chatId,
-      required User sender,
-      required User receiver,
-      required Message message,
-      postAuthor}) {
-    // TODO: implement sendMessage
-    throw UnimplementedError();
-  }
+
+
 }

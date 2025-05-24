@@ -64,26 +64,27 @@ abstract class AppColors {
 
   /// The primary Instagram gradient pallete.
   static const primaryGradient = <Color>[
-    Color(0xFF833AB4), // Purple
-    Color(0xFFF77737), // Orange
-    Color(0xFFE1306C), // Red-pink
-    Color(0xFFC13584), // Red-purple
-    Color(0xFF833AB4), // Duplicate of the first color
+    Color(0xFF0E0C00), // Red-pink
+    Color(0xff957F04), // Purple
+    Color(0xff957f04), // Purple
+    Color(0xFF7A6A16), // Orange
+    Color(0xFFFDEFA0), // Duplicate of the first color
+    // Color(0xFFC13584), // Red-purple
   ];
 
   /// The primary Telegram gradient chat background pallete.
   static const primaryBackgroundGradient = <Color>[
-    Color.fromARGB(255, 119, 69, 121),
-    Color.fromARGB(255, 141, 124, 189),
-    Color.fromARGB(255, 50, 94, 170),
+    Color.fromARGB(255, 149, 127, 4),
+    Color.fromARGB(255, 122, 106, 22),
+    Color.fromARGB(255, 253, 239, 160),
     Color.fromARGB(255, 111, 156, 189),
   ];
 
   /// The primary Telegram gradient chat message bubble pallete.
   static const primaryMessageBubbleGradient = <Color>[
     Color.fromARGB(255, 226, 128, 53),
-    Color.fromARGB(255, 228, 96, 182),
-    Color.fromARGB(255, 107, 73, 195),
+    Color.fromARGB(255, 149, 127, 4),
+    Color.fromARGB(255, 191, 179, 117),
     Color.fromARGB(255, 78, 173, 195),
   ];
 }
