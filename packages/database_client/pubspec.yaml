@@ -14,6 +14,7 @@ dependencies:
   flutter:
     sdk: flutter
   jiffy: ">=6.2.1 <=6.2.2"
+  firebase_messaging: ^15.2.6
   powersync_repository:
     path: ../powersync_repository
   shared:
@@ -22,6 +23,7 @@ dependencies:
     path: ../user_repository
   snap_blocks:
     path: ../snap_blocks
+  googleapis_auth: ^2.0.0
 
 dev_dependencies:
   flutter_test:

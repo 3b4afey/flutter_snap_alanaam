@@ -529,6 +529,7 @@ class UsersListView extends StatelessWidget {
                             Stack(
                               children: [
                                 UserProfileAvatar(
+                                  radius: 40,
                                   resizeHeight: 252,
                                   avatarUrl: user.avatarUrl,
                                   enableBorder: false,

@@ -4,7 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:form_fields/form_fields.dart';
 
-// import 'package:notifications_repository/notifications_repository.dart';
+import 'package:notifications_repository/notifications_repository.dart';
 import 'package:powersync_repository/powersync_repository.dart';
 import 'package:shared/shared.dart';
 import 'package:user_repository/user_repository.dart';
@@ -20,14 +20,14 @@ class SignUpCubit extends Cubit<SignupState> {
   /// {@macro sign_up_cubit}
   SignUpCubit({
     required UserRepository userRepository,
-    // required NotificationsRepository notificationsRepository,
+    required NotificationsRepository notificationsRepository,
   })  : _userRepository = userRepository,
-        // _notificationsClient = notificationsRepository,
+        _notificationsClient = notificationsRepository,
         super(const SignupState.initial());
 
   final UserRepository _userRepository;
 
-  // final NotificationsRepository _notificationsClient;
+  final NotificationsRepository _notificationsClient;
 
   /// Changes password visibility, making it visible or not.
   void changePasswordVisibility() => emit(
@@ -233,7 +233,7 @@ class SignUpCubit extends Cubit<SignupState> {
         );
       }
 
-      // final pushToken = await _notificationsClient.fetchToken();
+      final pushToken = await _notificationsClient.fetchToken();
 
       await _userRepository.signUpWithPassword(
         email: email.value,
@@ -241,7 +241,7 @@ class SignUpCubit extends Cubit<SignupState> {
         fullName: fullName.value,
         username: username.value,
         avatarUrl: imageUrlResponse,
-        // pushToken: pushToken,
+        pushToken: pushToken,
       );
 
       if (isClosed) return;

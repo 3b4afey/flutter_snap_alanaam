@@ -39,6 +39,7 @@ class ChatInboxTile extends StatelessWidget {
       leading: UserProfileAvatar(
         resizeHeight: 156,
         userId: user.id,
+        avatarUrl: participant.avatarUrl,
         enableInactiveBorder: false,
         withAdaptiveBorder: false,
         radius: 26,

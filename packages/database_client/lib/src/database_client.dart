@@ -170,14 +170,14 @@ abstract class PostsBaseRepository {
   Future<void> deleteComment({required String id});
 
   /// Shares the post with the user identified by [receiver].
-// Future<void> sharePost({
-//   required String id,
-//   required User sender,
-//   required User receiver,
-//   required Message sharedPostMessage,
-//   Message? message,
-//   PostAuthor? postAuthor,
-// });
+Future<void> sharePost({
+  required String id,
+  required User sender,
+  required User receiver,
+  required Message sharedPostMessage,
+  Message? message,
+  PostAuthor? postAuthor,
+});
 }
 
 /// Abstract base class for a chats repository.
@@ -874,104 +874,104 @@ WHERE id = ?
         [id],
       );
 
-//   @override
-//   Future<void> sharePost({
-//     required String id,
-//     required User sender,
-//     required User receiver,
-//     required Message sharedPostMessage,
-//     Message? message,
-//     PostAuthor? postAuthor,
-//   }) async
-//   {
-//     final exists = await _powerSyncRepository.db().execute(
-//       '''
-// SELECT 1 FROM posts WHERE id = ?
-// ''',
-//       [id],
-//     );
-//     if (exists.isEmpty) return;
-//     final conversation = await _powerSyncRepository.db().execute(
-//       '''
-// SELECT conversation_id
-//   FROM participants
-// WHERE user_id = ?
-//   AND conversation_id IN (
-//       SELECT conversation_id
-//       FROM participants
-//       WHERE user_id = ?
-//     );
-// ''',
-//       [sender.id, receiver.id],
-//     );
-//     if (conversation.isNotEmpty) {
-//       final chatId = conversation.first['conversation_id'] as String;
-//       await Future.wait([
-//         sendMessage(
-//           chatId: chatId,
-//           sender: sender,
-//           receiver: receiver,
-//           message: sharedPostMessage,
-//           postAuthor: postAuthor,
-//         ),
-//         if (message != null)
-//           sendMessage(
-//             chatId: chatId,
-//             sender: sender,
-//             receiver: receiver,
-//             message: message,
-//           ),
-//       ]);
-//       return;
-//     }
-//     final newChatId = uuid.v4();
-//     final createdConversation = _powerSyncRepository.db().execute(
-//       '''
-// insert into
-//   conversations (id, type, name, created_at, updated_at)
-// values
-//   (?, ?, '', ?, ?)
-// ''',
-//       [newChatId, ChatType.oneOnOne.value, JiffyX.now(), JiffyX.now()],
-//     );
-//     final addParticipant1 = _powerSyncRepository.db().execute(
-//       '''
-// insert into
-//   participants (id, user_id, conversation_id)
-//   values
-//   (?, ?, ?)
-//   ''',
-//       [uuid.v4(), sender.id, newChatId],
-//     );
-//     final addParticipant2 = _powerSyncRepository.db().execute(
-//       '''
-// insert into
-//   participants (id, user_id, conversation_id)
-//   values
-//   (?, ?, ?)
-//   ''',
-//       [uuid.v4(), receiver.id, newChatId],
-//     );
-//     await createdConversation
-//         .whenComplete(() => Future.wait([addParticipant1, addParticipant2]));
-//
-//     await Future.wait([
-//       sendMessage(
-//         chatId: newChatId,
-//         sender: sender,
-//         receiver: receiver,
-//         message: sharedPostMessage,
-//         postAuthor: postAuthor,
-//       ),
-//       if (message != null)
-//         sendMessage(
-//           chatId: newChatId,
-//           sender: sender,
-//           receiver: receiver,
-//           message: message,
-//         ),
-//     ]);
-//   }
+  @override
+  Future<void> sharePost({
+    required String id,
+    required User sender,
+    required User receiver,
+    required Message sharedPostMessage,
+    Message? message,
+    PostAuthor? postAuthor,
+  }) async
+  {
+    final exists = await _powerSyncRepository.db().execute(
+      '''
+SELECT 1 FROM posts WHERE id = ?
+''',
+      [id],
+    );
+    if (exists.isEmpty) return;
+    final conversation = await _powerSyncRepository.db().execute(
+      '''
+SELECT conversation_id
+  FROM participants
+WHERE user_id = ?
+  AND conversation_id IN (
+      SELECT conversation_id
+      FROM participants
+      WHERE user_id = ?
+    );
+''',
+      [sender.id, receiver.id],
+    );
+    if (conversation.isNotEmpty) {
+      final chatId = conversation.first['conversation_id'] as String;
+      await Future.wait([
+        sendMessage(
+          chatId: chatId,
+          sender: sender,
+          receiver: receiver,
+          message: sharedPostMessage,
+          postAuthor: postAuthor,
+        ),
+        if (message != null)
+          sendMessage(
+            chatId: chatId,
+            sender: sender,
+            receiver: receiver,
+            message: message,
+          ),
+      ]);
+      return;
+    }
+    final newChatId = uuid.v4();
+    final createdConversation = _powerSyncRepository.db().execute(
+      '''
+insert into
+  conversations (id, type, name, created_at, updated_at)
+values
+  (?, ?, '', ?, ?)
+''',
+      [newChatId, ChatType.oneOnOne.value, JiffyX.now(), JiffyX.now()],
+    );
+    final addParticipant1 = _powerSyncRepository.db().execute(
+      '''
+insert into
+  participants (id, user_id, conversation_id)
+  values
+  (?, ?, ?)
+  ''',
+      [uuid.v4(), sender.id, newChatId],
+    );
+    final addParticipant2 = _powerSyncRepository.db().execute(
+      '''
+insert into
+  participants (id, user_id, conversation_id)
+  values
+  (?, ?, ?)
+  ''',
+      [uuid.v4(), receiver.id, newChatId],
+    );
+    await createdConversation
+        .whenComplete(() => Future.wait([addParticipant1, addParticipant2]));
+
+    await Future.wait([
+      sendMessage(
+        chatId: newChatId,
+        sender: sender,
+        receiver: receiver,
+        message: sharedPostMessage,
+        postAuthor: postAuthor,
+      ),
+      if (message != null)
+        sendMessage(
+          chatId: newChatId,
+          sender: sender,
+          receiver: receiver,
+          message: message,
+        ),
+    ]);
+  }
 
   @override
   Stream<List<Comment>> repliedCommentsOf({required String commentId}) =>
@@ -1281,14 +1281,14 @@ values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         try {
           final receivePort = ReceivePort();
 
-          // await Isolate.spawn(sendBackgroundNotification, [
-          //   receivePort.sendPort,
-          //   receiver,
-          //   sender,
-          //   message,
-          //   postAuthor,
-          //   chatId,
-          // ]);
+          await Isolate.spawn(sendBackgroundNotification, [
+            receivePort.sendPort,
+            receiver,
+            sender,
+            message,
+            postAuthor,
+            chatId,
+          ]);
         } catch (error, stackTrace) {
           logE(
             'Error send notification.',
@@ -1299,58 +1299,58 @@ values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       });
 
   /// Sends notification in a background isolate.
-  // Future<void> sendBackgroundNotification(List<dynamic> args) async {
-  //   await sendNotification(
-  //     reciever: args[1] as User,
-  //     sender: args[2] as User,
-  //     message: args[3] as Message,
-  //     postAuthor: args[4] as PostAuthor?,
-  //     chatId: args[5] as String,
-  //   );
-  //   Isolate.exit(args[0] as SendPort, args);
-  // }
-//
-//   /// Sends notification using Google APIs to user.
-//   Future<void> sendNotification({
-//     required User reciever,
-//     required User sender,
-//     String? chatId,
-//     Message? message,
-//     PostAuthor? postAuthor,
-//   }) async {
-//     final notificationMessage = postAuthor != null
-//         ? 'Sent post by ${postAuthor.username}'
-//         : message?.message;
-//     final notificationBody =
-//         '(${reciever.displayUsername}): ${sender.displayUsername}: '
-//         '$notificationMessage';
-//
-//     final data = {
-//       'to': reciever.pushToken,
-//       'content_available': true,
-//       'priority': 10,
-//       'notification': {
-//         'title': 'Instagram',
-//         'body': notificationBody,
-//         'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-//       },
-//       'data': {
-//         if (chatId != null) 'chat_id': chatId,
-//       },
-//     };
-//
-//     final headers = {
-//       HttpHeaders.contentTypeHeader: 'application/json',
-//       HttpHeaders.authorizationHeader: 'key=${EnvProd.fcmServerKey}',
-//     };
-//
-//     final res = await Dio().post<String>(
-//       'https://fcm.googleapis.com/fcm/send',
-//       data: jsonEncode(data),
-//       options: Options(headers: headers),
-//     );
-//     logD('Response: $res, \n status code: ${res.statusCode}');
-//   }
+  Future<void> sendBackgroundNotification(List<dynamic> args) async {
+    await sendNotification(
+      reciever: args[1] as User,
+      sender: args[2] as User,
+      message: args[3] as Message,
+      postAuthor: args[4] as PostAuthor?,
+      chatId: args[5] as String,
+    );
+    Isolate.exit(args[0] as SendPort, args);
+  }
+
+  /// Sends notification using Google APIs to user.
+  Future<void> sendNotification({
+    required User reciever,
+    required User sender,
+    String? chatId,
+    Message? message,
+    PostAuthor? postAuthor,
+  }) async {
+    final notificationMessage = postAuthor != null
+        ? 'Sent post by ${postAuthor.username}'
+        : message?.message;
+    final notificationBody =
+        '(${reciever.displayUsername}): ${sender.displayUsername}: '
+        '$notificationMessage';
+
+    final data = {
+      'to': reciever.pushToken,
+      'content_available': true,
+      'priority': 10,
+      'notification': {
+        'title': 'Instagram',
+        'body': notificationBody,
+        'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+      },
+      'data': {
+        if (chatId != null) 'chat_id': chatId,
+      },
+    };
+
+    // final headers = {
+    //   HttpHeaders.contentTypeHeader: 'application/json',
+    //   HttpHeaders.authorizationHeader: 'key=${EnvProd.fcmServerKey}',
+    // };
+
+    // final res = await Dio().post<String>(
+    //   'https://fcm.googleapis.com/fcm/send',
+    //   data: jsonEncode(data),
+    //   options: Options(headers: headers),
+    // );
+    // logD('Response: $res, \n status code: ${res.statusCode}');
+  }
 
   @override
   Future<void> editMessage({

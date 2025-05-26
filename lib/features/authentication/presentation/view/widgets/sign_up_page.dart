@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snap_alanaam/features/authentication/presentation/sign_up.dart';
 import 'package:flutter_snap_alanaam/l10n/l10n.dart';
+import 'package:notifications_repository/notifications_repository.dart';
 import 'package:user_repository/user_repository.dart';
 import 'package:snap_alanaam_blocks_ui/snap_alanaam_blocks_ui.dart';
 
@@ -23,6 +24,7 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => SignUpCubit(
+        notificationsRepository: context.read<NotificationsRepository>(),
         userRepository: context.read<UserRepository>(),
       ),
       child: App.AppScaffold(
